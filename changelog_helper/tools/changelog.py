@@ -1,34 +1,45 @@
+import json
 from datetime import date
 
-from ..chain import get_chain
-from ..utils import ai_message_repr
+from loguru import logger
+
+from ..gemini import Gemini
 
 PROMPT_TEMPLATE = r"""
-Based on the extracted text, provide the changelog or release notes from {from_date} to {to_date}.
+Based on the context provided, generate the changelog or release notes for the period from {from_date} to {to_date}. Ensure compliance with the JSON schema and summarize the changelog in Markdown format.
 
 Rules:
-- If no changelog is found between {from_date} and {to_date}, return an empty string.
-- Convert dates formatted like '2024-Sep-20' to '2024-09-20'.
-- Output the results in Markdown format.
+- Include only changelog or release notes with confirmed dates within {from_date} and {to_date}.
+- All entries must be directly derived from the provided context, avoiding placeholder examples.
+- Ignore any upcoming changes that lack explicit dates.
+- If no changelog or release notes are available for the specified date range, return an empty string.
+- Convert dates formatted as '2024-Sep-20' to '2024-09-20'.
+- Present the results in Markdown format.
 
-Example:
-- (2024-10-08) Added feature A.
-- (2024-09-10) Fixed bug B.
-
-Extracted Text:
-{extracted_text}
+Context:
+{context}
 
 Changelog:
-"""
+"""  # noqa
 
 
-def list_changelog(text: str, from_date: date, to_date: date) -> str:
-    chain = get_chain(PROMPT_TEMPLATE)
-    ai_message = chain.invoke(
-        {
-            "extracted_text": text,
-            "from_date": from_date,
-            "to_date": to_date,
-        },
+def list_changelog(text: str, from_date: date, to_date: date) -> dict:
+    gemini = Gemini()
+    response = gemini(
+        [
+            PROMPT_TEMPLATE.format(
+                context=text,
+                from_date=from_date,
+                to_date=to_date,
+            ),
+        ],
     )
-    return ai_message_repr(ai_message)
+
+    if not response.parts:
+        return {}
+
+    try:
+        return json.loads(response.text)
+    except json.JSONDecodeError as e:
+        logger.error(e)
+        return {}
