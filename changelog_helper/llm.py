@@ -12,8 +12,8 @@ from loguru import logger
 
 @functools.cache
 def get_llm_from_env() -> BaseChatModel:
-    model = os.getenv("MODEL", "gemini-1.5-pro")
-    # model = os.getenv("MODEL", "gpt-4o-mini")
+    # model = os.getenv("MODEL", "gemini-1.5-pro")
+    model = os.getenv("MODEL", "gpt-4o-mini")
     temperature = float(os.getenv("TEMPERATURE", 0.0))
     logger.info("language model: {}, temperature: {}", model, temperature)
 

@@ -2,9 +2,9 @@
 
 ## Installation
 
-### Install singlefile CLI
+### Install Singlefile CLI
 
-[Singlefile CLI Installation Guide](https://github.com/gildas-lormeau/single-file-cli?tab=readme-ov-file#installation)
+Follow the [Singlefile CLI Installation Guide](https://github.com/gildas-lormeau/single-file-cli?tab=readme-ov-file#installation).
 
 ### Install Poetry
 
@@ -13,13 +13,25 @@ pip install pipx
 pipx install poetry
 ```
 
-### Install Python dependencies
+### Install Python Dependencies
 
 ```sh
 poetry install
 ```
 
-### Run the code
+### API Key Configuration
+
+Create a `.env` file in the root directory of your project and add your API keys:
+
+```env
+LLM_MODEL=gpt-4o-mini
+OPENAI_API_KEY=your_openai_api_key_here
+# or
+LLM_MODEL=gemini-1.5-pro
+GOOGLE_API_KEY=your_google_api_key_here
+```
+
+### Run the Code
 
 ```sh
 poetry run python main.py
