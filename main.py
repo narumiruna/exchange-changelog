@@ -1,4 +1,5 @@
 from datetime import date
+from datetime import datetime
 from datetime import timedelta
 from pathlib import Path
 
@@ -7,14 +8,15 @@ from dotenv import find_dotenv
 from dotenv import load_dotenv
 from loguru import logger
 
-from changelog_helper.llm import set_sqlite_llm_cache
 from changelog_helper.loaders import load_html_with_httpx
 from changelog_helper.loaders import load_html_with_singlefile
-from changelog_helper.tools import list_changelog
+from changelog_helper.tools.changelog_gpt import ChangeLog
+from changelog_helper.tools.changelog_gpt import ChangeLogList
+from changelog_helper.tools.changelog_gpt import extract_changelog
 
 URLS = [
     ("woo", "https://docs.woox.io/#release-note", "httpx"),
-    ("binance", "https://binance-docs.github.io/apidocs/spot/en/#change-log", "httpx"),
+    ("binance", "https://binance-docs.github.io/apidocs/spot/en/#change-log", "httpx"),  # too long
     ("binance", "https://developers.binance.com/docs/binance-spot-api-docs/CHANGELOG", "httpx"),
     ("binance", "https://developers.binance.com/docs/margin_trading/change-log", "httpx"),
     ("binance", "https://developers.binance.com/docs/derivatives/change-log", "httpx"),
@@ -58,9 +60,7 @@ CHANGELOG:
 def main(output_file: Path) -> None:
     load_dotenv(find_dotenv())
 
-    set_sqlite_llm_cache()
-
-    changelogs = []
+    output_string = ""
     for exchange, url, method in URLS:
         if method == "singlefile":
             text = load_html_with_singlefile(url)
@@ -69,38 +69,37 @@ def main(output_file: Path) -> None:
         else:
             raise ValueError(f"unknown method: {method}")
 
-        # logger.debug("text: {}", text)
-
-        from_date = date.today() - timedelta(days=7)
-        to_date = date.today()
-
-        resp = list_changelog(
-            text,
-            from_date=from_date,
-            to_date=to_date,
-        )
+        resp: ChangeLogList = extract_changelog(text)
         logger.info("result: {}", resp)
 
-        resp_string = ""
-        for item in resp:
-            if item["text"].strip() == "":
-                continue
-            resp_string += f"- {item['date']}: {item['text']}\n"
+        changelogs: list[ChangeLog] = []
 
-        if not resp_string:
+        # remove old changelogs
+        for item in resp.parts:
+            item_date = datetime.strptime(item.date, "%Y-%m-%d").date()
+            if item_date >= date.today() - timedelta(days=7):
+                logger.info("item: {}", item)
+                changelogs.append(item)
+
+        if not changelogs:
+            logger.info("no changelogs found for {}", exchange)
             continue
+
+        resp_string = ""
+        for changelog in changelogs:
+            resp_string += f"- {changelog.date}: {changelog.changelog}\n"
 
         format_string = FORMAT_STRING_TEMPLATE.format(
             exchange=exchange,
             url=url,
             changelog=resp_string,
         )
-
-        changelogs.append(format_string)
         logger.info("s: {}", format_string)
 
-    with output_file.open("w") as f:
-        f.write("\n\n".join(changelogs))
+        output_string += format_string + "\n\n"
+
+        with output_file.open("w") as f:
+            f.write(output_string)
 
 
 if __name__ == "__main__":

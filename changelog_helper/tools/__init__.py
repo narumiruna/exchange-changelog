@@ -1,1 +1,1 @@
-from .changelog import list_changelog
+from .changelog_gemini import list_changelog
