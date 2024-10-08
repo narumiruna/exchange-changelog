@@ -32,6 +32,8 @@ class ChangeLogList(BaseModel):
 def extract_changelog(text: str) -> ChangeLogList | None:
     client = OpenAI()
 
+    # https://platform.openai.com/docs/guides/structured-outputs
+    # TODO: Handle edge cases
     completion = client.beta.chat.completions.parse(
         model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
         messages=[
