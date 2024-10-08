@@ -1,3 +1,5 @@
+import os
+
 from openai import OpenAI
 from pydantic import BaseModel
 
@@ -31,7 +33,7 @@ def extract_changelog(text: str) -> ChangeLogList | None:
     client = OpenAI()
 
     completion = client.beta.chat.completions.parse(
-        model="gpt-4o-mini",
+        model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
         messages=[
             {
                 "role": "user",
