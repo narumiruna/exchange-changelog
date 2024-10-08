@@ -69,6 +69,11 @@ def main(output_file: Path) -> None:
         else:
             raise ValueError(f"unknown method: {method}")
 
+        logger.info("text length: {}", len(text))
+
+        # trim text
+        text = text[:20000]
+
         resp: ChangeLogList = extract_changelog(text)
         logger.info("result: {}", resp)
 
