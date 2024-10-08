@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess
 import tempfile
 from pathlib import Path
@@ -6,6 +7,13 @@ from pathlib import Path
 import httpx
 from bs4 import BeautifulSoup
 from loguru import logger
+from markdownify import markdownify
+
+
+def remove_base64_image(markdown_text: str) -> str:
+    pattern = r"!\[.*?\]\(data:image\/.*?;base64,.*?\)"
+    cleaned_text = re.sub(pattern, "", markdown_text)
+    return cleaned_text
 
 
 def save_html_with_singlefile(url: str, cookies_file: str | None = None) -> str:
@@ -47,7 +55,7 @@ def load_html_with_singlefile(url: str) -> str:
     return text
 
 
-def load_html_with_httpx(url: str) -> str:
+def load_html_with_httpx(url: str, markdown: bool = True) -> str:
     logger.info("Loading HTML: {}", url)
 
     headers = {
@@ -57,6 +65,11 @@ def load_html_with_httpx(url: str) -> str:
 
     resp = httpx.get(url=url, headers=headers, follow_redirects=True)
     resp.raise_for_status()
+
+    if markdown:
+        text = markdownify(resp.text)
+        return remove_base64_image(text)
+
     soup = BeautifulSoup(resp.content, "html.parser")
     text = soup.get_text(strip=True)
     return text
