@@ -32,7 +32,7 @@ OPENAI_MODEL=gpt-4o-mini
 OPENAI_API_KEY=your_openai_api_key_here
 ```
 
-### Run the Code
+## Usage
 
 Run the main script using Poetry:
 
