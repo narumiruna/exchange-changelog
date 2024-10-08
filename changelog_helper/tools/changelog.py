@@ -2,13 +2,12 @@ from openai import OpenAI
 from pydantic import BaseModel
 
 PROMPT_TEMPLATE = r"""
-Extract the first five sets of ChangeLog or Release Notes based on the specified date.
-Ensure compliance with the JSON schema.
+Extract and summarize the first ten sets of ChangeLog or Release Notes based on the date.
 
 Rules:
+- Ensure compliance with the JSON schema.
 - All entries must be directly derived from the provided context, avoiding placeholder examples.
 - Ignore any upcoming changes that lack explicit dates.
-- If there are no changelogs or release notes available for the specified date range, return an empty string.
 - Convert dates formatted as '2024-Sep-20' to '2024-09-20'.
 - Present the results in Markdown format.
 
@@ -28,13 +27,12 @@ class ChangeLogList(BaseModel):
     parts: list[ChangeLog]
 
 
-def extract_changelog(text: str) -> ChangeLog:
+def extract_changelog(text: str) -> ChangeLogList | None:
     client = OpenAI()
 
     completion = client.beta.chat.completions.parse(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "Extract the changelog or release notes from the provided context."},
             {
                 "role": "user",
                 "content": PROMPT_TEMPLATE.format(
@@ -46,8 +44,6 @@ def extract_changelog(text: str) -> ChangeLog:
     )
 
     if not completion.choices:
-        return {}
+        return None
 
-    response = completion.choices[0].message.parsed
-
-    return response
+    return completion.choices[0].message.parsed

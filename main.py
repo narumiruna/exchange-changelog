@@ -10,10 +10,10 @@ from loguru import logger
 
 from changelog_helper.loaders import load_html_with_httpx
 from changelog_helper.loaders import load_html_with_singlefile
-from changelog_helper.tools.changelog_gpt import ChangeLog
-from changelog_helper.tools.changelog_gpt import ChangeLogList
-from changelog_helper.tools.changelog_gpt import extract_changelog
+from changelog_helper.tools.changelog import ChangeLog
+from changelog_helper.tools.changelog import extract_changelog
 
+NUM_DAYS = 14
 URLS = [
     ("woo", "https://docs.woox.io/#release-note", "httpx"),
     ("binance", "https://binance-docs.github.io/apidocs/spot/en/#change-log", "httpx"),  # too long
@@ -74,24 +74,29 @@ def main(output_file: Path) -> None:
         # trim text
         text = text[:20000]
 
-        resp: ChangeLogList = extract_changelog(text)
-        logger.info("result: {}", resp)
+        resp = extract_changelog(text)
+        if resp is None:
+            logger.info("no changelogs found for {}", exchange)
+            continue
 
-        changelogs: list[ChangeLog] = []
+        for part in resp.parts:
+            logger.info("part: {}", part)
+
+        changelog_list: list[ChangeLog] = []
 
         # remove old changelogs
         for item in resp.parts:
             item_date = datetime.strptime(item.date, "%Y-%m-%d").date()
-            if item_date >= date.today() - timedelta(days=7):
+            if item_date >= date.today() - timedelta(days=NUM_DAYS):
                 logger.info("item: {}", item)
-                changelogs.append(item)
+                changelog_list.append(item)
 
-        if not changelogs:
+        if not changelog_list:
             logger.info("no changelogs found for {}", exchange)
             continue
 
         resp_string = ""
-        for changelog in changelogs:
+        for changelog in changelog_list:
             resp_string += f"- {changelog.date}: {changelog.changelog}\n"
 
         format_string = FORMAT_STRING_TEMPLATE.format(
