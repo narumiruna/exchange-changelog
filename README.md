@@ -26,9 +26,6 @@ Create a `.env` file in the root directory of your project and add your API keys
 ```env
 LLM_MODEL=gpt-4o-mini
 OPENAI_API_KEY=your_openai_api_key_here
-# or
-LLM_MODEL=gemini-1.5-pro
-GOOGLE_API_KEY=your_google_api_key_here
 ```
 
 ### Run the Code

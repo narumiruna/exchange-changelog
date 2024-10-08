@@ -91,9 +91,9 @@ def main(output_file: Path) -> None:
                 logger.info("item: {}", item)
                 changelog_list.append(item)
 
-        if not changelog_list:
-            logger.info("no changelogs found for {}", exchange)
-            continue
+        # if not changelog_list:
+        #     logger.info("no changelogs found for {}", exchange)
+        #     continue
 
         resp_string = ""
         for changelog in changelog_list:
@@ -104,7 +104,7 @@ def main(output_file: Path) -> None:
             url=url,
             changelog=resp_string,
         )
-        logger.info("s: {}", format_string)
+        logger.info("format_string: {}", format_string)
 
         output_string += format_string + "\n\n"
 
