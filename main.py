@@ -13,7 +13,6 @@ from changelog_helper.loaders import load_html_with_singlefile
 from changelog_helper.tools.changelog import ChangeLog
 from changelog_helper.tools.changelog import extract_changelog
 
-NUM_DAYS = 14
 URLS = [
     ("woo", "https://docs.woox.io/#release-note", "httpx"),
     ("binance", "https://binance-docs.github.io/apidocs/spot/en/#change-log", "httpx"),  # too long
@@ -57,7 +56,8 @@ CHANGELOG:
 
 @click.command()
 @click.option("-o", "--output-file", type=click.Path(path_type=Path), default="changelog.md", help="output file")
-def main(output_file: Path) -> None:
+@click.option("-d", "--num-days", type=int, default=14, help="number of days to look back")
+def main(output_file: Path, num_days: int) -> None:
     load_dotenv(find_dotenv())
 
     output_string = ""
@@ -87,7 +87,7 @@ def main(output_file: Path) -> None:
         # remove old changelogs
         for item in resp.parts:
             item_date = datetime.strptime(item.date, "%Y-%m-%d").date()
-            if item_date >= date.today() - timedelta(days=NUM_DAYS):
+            if item_date >= date.today() - timedelta(days=num_days):
                 logger.info("item: {}", item)
                 changelog_list.append(item)
 
