@@ -1,27 +1,25 @@
-from datetime import date
-from datetime import datetime
-from datetime import timedelta
 from pathlib import Path
+from typing import Literal
 
 import click
 from dotenv import find_dotenv
 from dotenv import load_dotenv
 from loguru import logger
 
+from changelog_helper.config import load_config
 from changelog_helper.loaders import load_html_with_httpx
 from changelog_helper.loaders import load_html_with_singlefile
-from changelog_helper.tools.changelog import ChangeLog
 from changelog_helper.tools.changelog import extract_changelog
-from changelog_helper.utils import load_yaml
+from changelog_helper.tools.changelog import select_recent_changelogs
 
-FORMAT_STRING_TEMPLATE = r"""
-# {exchange}
 
-{url}
-
-CHANGELOG:
-{changelog}
-"""
+def load_html(url: str, method: Literal["httpx", "singlefile"]) -> str:
+    if method == "singlefile":
+        return load_html_with_singlefile(url)
+    elif method == "httpx":
+        return load_html_with_httpx(url)
+    else:
+        raise ValueError(f"unknown method: {method}")
 
 
 @click.command()
@@ -31,61 +29,28 @@ def main(config_file: Path, output_file: Path) -> None:
     load_dotenv(find_dotenv())
 
     logger.info("loading config file: {}", config_file)
-    cfg = load_yaml(config_file)
-    urls = cfg.get("urls", [])
-    num_days = cfg.get("num_days", 14)
+    cfg = load_config(config_file)
 
     output_string = ""
-    for url_data in urls:
-        name = url_data.get("name")
-        url = url_data.get("url")
-        method = url_data.get("method")
-
-        if method == "singlefile":
-            text = load_html_with_singlefile(url)
-        elif method == "httpx":
-            text = load_html_with_httpx(url)
-        else:
-            raise ValueError(f"unknown method: {method}")
-
+    for doc in cfg.docs:
+        text = load_html(doc.url, doc.method)
         logger.info("text length: {}", len(text))
 
         # trim text
-        text = text[:20000]
+        text = text[: cfg.trim_len]
 
-        resp = extract_changelog(text)
-        if resp is None:
-            logger.info("no changelogs found for {}", name)
+        changelog_list = extract_changelog(text)
+        if changelog_list is None:
+            logger.info("no changelogs found for {}", doc.name)
             continue
 
-        for part in resp.items:
-            logger.info("part: {}", part)
+        # log parsed changelogs
+        for changelog in changelog_list.items:
+            logger.info("changelog: {}", changelog)
 
-        changelog_list: list[ChangeLog] = []
+        changelog_list = select_recent_changelogs(changelog_list, cfg.num_days)
 
-        # remove old changelogs
-        for item in resp.items:
-            item_date = datetime.strptime(item.date, "%Y-%m-%d").date()
-            if item_date >= date.today() - timedelta(days=num_days):
-                logger.info("item: {}", item)
-                changelog_list.append(item)
-
-        # if not changelog_list:
-        #     logger.info("no changelogs found for {}", exchange)
-        #     continue
-
-        resp_string = ""
-        for changelog in changelog_list:
-            resp_string += f"- {changelog.date}: {changelog.changelog}\n"
-
-        format_string = FORMAT_STRING_TEMPLATE.format(
-            exchange=name,
-            url=url,
-            changelog=resp_string,
-        )
-        logger.info("format_string: {}", format_string)
-
-        output_string += format_string + "\n\n"
+        output_string += f"# {doc.name}\n{doc.url}\n{changelog_list.pritty_repr()}\n\n"
 
         with output_file.open("w") as f:
             f.write(output_string)

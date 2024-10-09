@@ -1,4 +1,7 @@
 import os
+from datetime import date
+from datetime import datetime
+from datetime import timedelta
 
 from openai import OpenAI
 from pydantic import BaseModel
@@ -27,6 +30,27 @@ class ChangeLog(BaseModel):
 
 class ChangeLogList(BaseModel):
     items: list[ChangeLog]
+
+    def pritty_repr(self) -> str:
+        format_string = ""
+
+        prev_date = None
+        for changelog in self.items:
+            if prev_date != changelog.date:
+                prev_date = changelog.date
+                format_string += f"## {changelog.date}\n"
+            format_string += f"{changelog.changelog}\n"
+
+        return format_string
+
+
+def select_recent_changelogs(changelog_list: ChangeLogList, num_days: int) -> ChangeLogList:
+    new_changelog_list: ChangeLogList = ChangeLogList(items=[])
+    for item in changelog_list.items:
+        item_date = datetime.strptime(item.date, "%Y-%m-%d").date()
+        if item_date >= date.today() - timedelta(days=num_days):
+            new_changelog_list.items.append(item)
+    return new_changelog_list
 
 
 def extract_changelog(text: str) -> ChangeLogList | None:
