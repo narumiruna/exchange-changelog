@@ -41,6 +41,16 @@ URLS = [
         "https://www.okx.com/docs-v5/log_en/#upcoming-changes",
         "httpx",
     ),
+    (
+        "huobi",
+        "https://huobiapi.github.io/docs/spot/v1/en/#change-log",
+        "httpx",
+    ),
+    (
+        "hitbtc",
+        "https://api.hitbtc.com/#changelog",
+        "httpx",
+    ),
 ]
 
 
