@@ -17,4 +17,5 @@ COPY main.py .
 COPY pyproject.toml .
 COPY poetry.lock .
 COPY README.md .
+COPY config config
 RUN pip install --no-cache-dir .
