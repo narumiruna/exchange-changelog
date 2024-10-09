@@ -22,6 +22,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: poetry
+      - name: Create dotenv
+        run: |
+          echo OPENAI_MODEL=${{ secrets.OPENAI_MODEL }} >> .env
+          echo OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} >> .env
       - name: Run
         run: |
           poetry install
@@ -31,5 +35,5 @@ jobs:
           gistPat: ${{ secrets.GIST_TOKEN }}
           action: update
           filename: changelog.md
-          gistId: ${{ vars.GIST_ID }}
+          gistId: ${{ secrets.GIST_ID }}
           createIfNotExists: true
