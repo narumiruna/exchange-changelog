@@ -12,47 +12,7 @@ from changelog_helper.loaders import load_html_with_httpx
 from changelog_helper.loaders import load_html_with_singlefile
 from changelog_helper.tools.changelog import ChangeLog
 from changelog_helper.tools.changelog import extract_changelog
-
-URLS = [
-    ("woo", "https://docs.woox.io/#release-note", "httpx"),
-    ("binance", "https://binance-docs.github.io/apidocs/spot/en/#change-log", "httpx"),  # too long
-    ("binance", "https://developers.binance.com/docs/binance-spot-api-docs/CHANGELOG", "httpx"),
-    ("binance", "https://developers.binance.com/docs/margin_trading/change-log", "httpx"),
-    ("binance", "https://developers.binance.com/docs/derivatives/change-log", "httpx"),
-    ("coinbase", "https://docs.cdp.coinbase.com/exchange/docs/changelog/", "singlefile"),
-    ("coinbase", "https://docs.cdp.coinbase.com/exchange/docs/upcoming-changes", "singlefile"),
-    (
-        "max",
-        "https://docs.google.com/document/d/1iLwjhU-AHSLB4UnZh3cPbkYL-M3-R0jW0MEL6iWt410/edit?tab=t.0#heading=h.z31cougdyqo7",
-        "singlefile",
-    ),
-    (
-        "bybit",
-        "https://bybit-exchange.github.io/docs/changelog/v5",
-        "httpx",
-    ),
-    (
-        "bitget",
-        "https://www.bitget.com/api-doc/common/changelog",
-        "httpx",
-    ),
-    (
-        "okx",
-        "https://www.okx.com/docs-v5/log_en/#upcoming-changes",
-        "httpx",
-    ),
-    (
-        "huobi",
-        "https://huobiapi.github.io/docs/spot/v1/en/#change-log",
-        "httpx",
-    ),
-    (
-        "hitbtc",
-        "https://api.hitbtc.com/#changelog",
-        "httpx",
-    ),
-]
-
+from changelog_helper.utils import load_yaml
 
 FORMAT_STRING_TEMPLATE = r"""
 # {exchange}
@@ -65,13 +25,22 @@ CHANGELOG:
 
 
 @click.command()
+@click.option("-c", "--config-file", type=click.Path(path_type=Path), default="config/default.yaml", help="config file")
 @click.option("-o", "--output-file", type=click.Path(path_type=Path), default="changelog.md", help="output file")
-@click.option("-d", "--num-days", type=int, default=14, help="number of days to look back")
-def main(output_file: Path, num_days: int) -> None:
+def main(config_file: Path, output_file: Path) -> None:
     load_dotenv(find_dotenv())
 
+    logger.info("loading config file: {}", config_file)
+    cfg = load_yaml(config_file)
+    urls = cfg.get("urls", [])
+    num_days = cfg.get("num_days", 14)
+
     output_string = ""
-    for exchange, url, method in URLS:
+    for url_data in urls:
+        name = url_data.get("name")
+        url = url_data.get("url")
+        method = url_data.get("method")
+
         if method == "singlefile":
             text = load_html_with_singlefile(url)
         elif method == "httpx":
@@ -86,7 +55,7 @@ def main(output_file: Path, num_days: int) -> None:
 
         resp = extract_changelog(text)
         if resp is None:
-            logger.info("no changelogs found for {}", exchange)
+            logger.info("no changelogs found for {}", name)
             continue
 
         for part in resp.items:
@@ -110,7 +79,7 @@ def main(output_file: Path, num_days: int) -> None:
             resp_string += f"- {changelog.date}: {changelog.changelog}\n"
 
         format_string = FORMAT_STRING_TEMPLATE.format(
-            exchange=exchange,
+            exchange=name,
             url=url,
             changelog=resp_string,
         )
