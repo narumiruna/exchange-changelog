@@ -79,13 +79,13 @@ def main(output_file: Path, num_days: int) -> None:
             logger.info("no changelogs found for {}", exchange)
             continue
 
-        for part in resp.parts:
+        for part in resp.items:
             logger.info("part: {}", part)
 
         changelog_list: list[ChangeLog] = []
 
         # remove old changelogs
-        for item in resp.parts:
+        for item in resp.items:
             item_date = datetime.strptime(item.date, "%Y-%m-%d").date()
             if item_date >= date.today() - timedelta(days=num_days):
                 logger.info("item: {}", item)

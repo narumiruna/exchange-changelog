@@ -26,7 +26,7 @@ class ChangeLog(BaseModel):
 
 
 class ChangeLogList(BaseModel):
-    parts: list[ChangeLog]
+    items: list[ChangeLog]
 
 
 def extract_changelog(text: str) -> ChangeLogList | None:
