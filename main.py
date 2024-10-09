@@ -9,6 +9,7 @@ from loguru import logger
 from changelog_helper.config import load_config
 from changelog_helper.loaders import load_html_with_httpx
 from changelog_helper.loaders import load_html_with_singlefile
+from changelog_helper.slack import post_slack_message
 from changelog_helper.tools.changelog import extract_changelog
 from changelog_helper.tools.changelog import select_recent_changelogs
 
@@ -54,6 +55,9 @@ def main(config_file: Path, output_file: Path) -> None:
 
         with output_file.open("w") as f:
             f.write(output_string)
+
+    if cfg.slack_channel:
+        post_slack_message(cfg.slack_channel, output_string)
 
 
 if __name__ == "__main__":
