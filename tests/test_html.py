@@ -1,5 +1,3 @@
-import pytest
-
 from changelog_helper.loaders.html import remove_base64_image
 
 
@@ -16,13 +14,13 @@ def test_remove_base64_image_without_image():
 
 
 def test_remove_base64_image_with_multiple_images():
-    markdown_text = "Image1 ![alt text](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA) and Image2 ![alt text](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUB)"
+    markdown_text = "Image1 ![alt text](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA) and Image2 ![alt text](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUB)"  # noqa
     expected_result = "Image1  and Image2 "
     assert remove_base64_image(markdown_text) == expected_result
 
 
 def test_remove_base64_image_with_different_formats():
-    markdown_text = "Image1 ![alt text](data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD) and Image2 ![alt text](data:image/gif;base64,R0lGODlhPQBEAPeoAJosM//AwO/AwHV)"
+    markdown_text = "Image1 ![alt text](data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD) and Image2 ![alt text](data:image/gif;base64,R0lGODlhPQBEAPeoAJosM//AwO/AwHV)"  # noqa
     expected_result = "Image1  and Image2 "
     assert remove_base64_image(markdown_text) == expected_result
 
