@@ -26,7 +26,7 @@ jobs:
         run: |
           echo OPENAI_MODEL=${{ secrets.OPENAI_MODEL }} >> .env
           echo OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} >> .env
-          eche SINGLEFILE_PATH=${{ secrets.SINGLEFILE_PATH }} >> .env
+          echo SINGLEFILE_PATH=${{ secrets.SINGLEFILE_PATH }} >> .env
       - name: Run
         run: |
           poetry install
