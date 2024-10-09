@@ -1,0 +1,39 @@
+name: Python
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+        poetry-version: ["1.8.3"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: narumiruna/setup-poetry@v1
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+          cache: true
+      - name: Install dependencies
+        run: poetry install --sync
+      - name: Lint
+        run: make lint
+      # - name: Type check
+      #   run: make type
+      - name: Test
+        run: make cover
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

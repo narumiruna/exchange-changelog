@@ -1,0 +1,35 @@
+name: Cron
+
+on:
+  workflow_dispatch:
+#   schedule:
+#     - cron: "0 */12 * * *"
+
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        python-version: ["3.11"]
+        poetry-version: ["1.8.3"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: abatilo/actions-poetry@v3
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: poetry
+      - name: Run
+        run: |
+          poetry install
+          poetry run python main.py -c config/default.yaml -o changelog.md
+      - uses: danielmcconville/gist-sync-file-action@v2.0.0
+        with:
+          gistPat: ${{ secrets.GIST_TOKEN }}
+          action: update
+          filename: changelog.md
+          gistId: ${{ vars.GIST_ID }}
+          createIfNotExists: true
