@@ -1,5 +1,5 @@
 # number of days to look back
-num_days: 14
+num_days: 7
 
 trim_len: 10000
 
