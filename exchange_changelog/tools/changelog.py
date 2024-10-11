@@ -44,9 +44,7 @@ class ChangeLogList(BaseModel):
             if changelog.keywords:
                 result.append(f"Keywords: {', '.join(changelog.keywords)}")
 
-            result.append("\n")
-
-        return "\n".join(result)
+        return "\n\n".join(result)
 
 
 def select_recent_changelogs(changelog_list: ChangeLogList, num_days: int) -> ChangeLogList:
