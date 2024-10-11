@@ -16,7 +16,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            narumi/exchange-changelog-helper
+            narumi/exchange-changelog
           tags: |
             type=schedule
             type=ref,event=branch

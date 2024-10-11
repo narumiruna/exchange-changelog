@@ -6,12 +6,12 @@ from dotenv import find_dotenv
 from dotenv import load_dotenv
 from loguru import logger
 
-from changelog_helper.config import load_config
-from changelog_helper.loaders import load_html_with_httpx
-from changelog_helper.loaders import load_html_with_singlefile
-from changelog_helper.slack import post_slack_message
-from changelog_helper.tools.changelog import extract_changelog
-from changelog_helper.tools.changelog import select_recent_changelogs
+from exchange_changelog.config import load_config
+from exchange_changelog.loaders import load_html_with_httpx
+from exchange_changelog.loaders import load_html_with_singlefile
+from exchange_changelog.slack import post_slack_message
+from exchange_changelog.tools.changelog import extract_changelog
+from exchange_changelog.tools.changelog import select_recent_changelogs
 
 
 def load_html(url: str, method: Literal["httpx", "singlefile"]) -> str:

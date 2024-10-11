@@ -12,7 +12,7 @@ RUN npm install -g single-file-cli
 
 WORKDIR /app
 
-COPY changelog_helper changelog_helper
+COPY exchange_changelog exchange_changelog
 COPY main.py .
 COPY pyproject.toml .
 COPY poetry.lock .

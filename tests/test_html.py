@@ -1,4 +1,4 @@
-from changelog_helper.loaders.html import remove_base64_image
+from exchange_changelog.loaders.html import remove_base64_image
 
 
 def test_remove_base64_image_with_image():

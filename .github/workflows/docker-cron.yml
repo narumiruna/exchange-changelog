@@ -9,7 +9,7 @@ jobs:
   cron:
     runs-on: ubuntu-latest
     container:
-      image: narumi/exchange-changelog-helper:main
+      image: narumi/exchange-changelog:main
       env:
         OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

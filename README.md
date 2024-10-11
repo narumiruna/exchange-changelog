@@ -1,4 +1,4 @@
-# exchange-changelog-helper
+# exchange-changelog
 
 ## Installation
 
