@@ -30,6 +30,11 @@ Create a `.env` file in the root directory of your project and add your API keys
 ```env
 OPENAI_MODEL=gpt-4o-mini
 OPENAI_API_KEY=your_openai_api_key_here
+SINGLEFILE_PATH=single-file
+
+# optional
+SLACK_TOKEN=
+SLACK_CHANNEL=
 ```
 
 ## Usage
