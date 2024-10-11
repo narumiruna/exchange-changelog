@@ -1,0 +1,22 @@
+name: Docker Cron
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 */7 * *"
+
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    container:
+      image: narumi/exchange-changelog-helper:main
+      env:
+        OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
+        GIST_ID: ${{ secrets.GIST_ID }}
+        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+        SLACK_CHANNEL: ${{ vars.SLACK_CHANNEL }}
+    steps:
+      - run: |
+          python main.py

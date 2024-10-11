@@ -19,3 +19,5 @@ COPY poetry.lock .
 COPY README.md .
 COPY config config
 RUN pip install --no-cache-dir .
+
+CMD ["python", "main.py"]

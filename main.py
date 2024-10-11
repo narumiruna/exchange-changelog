@@ -56,8 +56,7 @@ def main(config_file: Path, output_file: Path) -> None:
         with output_file.open("w") as f:
             f.write(output_string)
 
-    if cfg.slack_channel:
-        post_slack_message(cfg.slack_channel, output_string)
+    post_slack_message(output_string)
 
 
 if __name__ == "__main__":
