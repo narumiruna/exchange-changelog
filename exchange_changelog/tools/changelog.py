@@ -3,29 +3,32 @@ from datetime import date
 from datetime import datetime
 from datetime import timedelta
 
+from loguru import logger
 from openai import OpenAI
 from pydantic import BaseModel
 
 PROMPT_TEMPLATE = r"""
-Extract and summarize the first ten sets of ChangeLog or Release Notes based on the date.
+Extract and summarize the first ten sets of ChangeLogs or Release Notes based on their dates.
 
-Rules:
-- Ensure compliance with the JSON schema.
-- All entries must be directly derived from the provided context, avoiding placeholder examples.
-- Ignore any upcoming changes that lack explicit dates.
-- Convert dates formatted as '2024-Sep-20' to '2024-09-20'.
-- Present the results in Markdown format.
+Guidelines:
+- Ensure the output conforms to the specified JSON schema.
+- Only use information directly from the provided context; avoid placeholder or generic examples.
+- Exclude any upcoming changes that lack explicit dates.
+- Standardize dates formatted as '2024-Sep-20' to '2024-09-20'.
+- If no changelog or release note exists for a particular date, skip the extraction for that date.
+- Output the results in Markdown format.
 
 Context:
 {context}
 
 Changelog:
-"""  # noqa
+"""
 
 
 class ChangeLog(BaseModel):
     date: str
-    changelog: str
+    content: str
+    keywords: list[str]
 
 
 class ChangeLogList(BaseModel):
@@ -39,8 +42,14 @@ class ChangeLogList(BaseModel):
             if prev_date != changelog.date:
                 prev_date = changelog.date
                 format_string += f"## {changelog.date}\n"
-            format_string += f"{changelog.changelog}\n"
+            format_string += f"{changelog.content}\n"
 
+            if changelog.keywords:
+                format_string += "Keywords: "
+                format_string += ", ".join(changelog.keywords)
+                format_string += "\n"
+
+            format_string += "\n"
         return format_string
 
 
@@ -57,21 +66,33 @@ def extract_changelog(text: str) -> ChangeLogList | None:
     client = OpenAI()
 
     # https://platform.openai.com/docs/guides/structured-outputs
-    # TODO: Handle edge cases
-    completion = client.beta.chat.completions.parse(
-        model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
-        messages=[
-            {
-                "role": "user",
-                "content": PROMPT_TEMPLATE.format(
-                    context=text,
-                ),
-            },
-        ],
-        response_format=ChangeLogList,
-    )
+    try:
+        completion = client.beta.chat.completions.parse(
+            model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+            messages=[
+                {
+                    "role": "user",
+                    "content": PROMPT_TEMPLATE.format(
+                        context=text,
+                    ),
+                },
+            ],
+            response_format=ChangeLogList,
+        )
 
-    if not completion.choices:
+        if not completion.choices:
+            logger.warning("no completion choices")
+            return None
+
+        response = completion.choices[0].message
+        if response.parsed:
+            return response.parsed
+        elif response.refusal:
+            logger.warning("unable to parse the changelog: {}", response.refusal)
+            return None
+        else:
+            logger.warning("no parsed response")
+            return None
+    except Exception as e:
+        logger.error("unable to parse the changelog: {}", e)
         return None
-
-    return completion.choices[0].message.parsed
