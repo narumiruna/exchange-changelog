@@ -23,7 +23,7 @@ Install the required Python dependencies using Poetry:
 poetry install
 ```
 
-### API Key Configuration
+### Environment Configuration
 
 Create a `.env` file in the root directory of your project and add your API keys:
 
@@ -32,9 +32,9 @@ OPENAI_MODEL=gpt-4o-mini
 OPENAI_API_KEY=your_openai_api_key_here
 SINGLEFILE_PATH=single-file
 
-# optional
-SLACK_TOKEN=
-SLACK_CHANNEL=
+# Optional
+SLACK_TOKEN=your_slack_token_here
+SLACK_CHANNEL=your_slack_channel_here
 ```
 
 ## Usage
