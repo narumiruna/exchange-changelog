@@ -8,11 +8,6 @@ on:
 jobs:
   cron:
     runs-on: self-hosted
-    strategy:
-      max-parallel: 1
-      matrix:
-        python-version: ["3.11"]
-        poetry-version: ["1.8.3"]
     steps:
       - uses: actions/checkout@v4
       - name: Create dotenv
