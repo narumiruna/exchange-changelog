@@ -53,7 +53,11 @@ class ChangeLogList(BaseModel):
 def select_recent_changelogs(changelog_list: ChangeLogList, num_days: int) -> ChangeLogList:
     new_changelog_list: ChangeLogList = ChangeLogList(items=[])
     for item in changelog_list.items:
-        item_date = datetime.strptime(item.date, "%Y-%m-%d").date()
+        try:
+            item_date = datetime.strptime(item.date, "%Y-%m-%d").date()
+        except ValueError as e:
+            logger.warning("unable to parse date: {} got error: {}", item.date, e)
+            continue
         if item_date >= date.today() - timedelta(days=num_days):
             new_changelog_list.items.append(item)
     return new_changelog_list
