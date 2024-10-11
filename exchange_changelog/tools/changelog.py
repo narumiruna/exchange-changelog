@@ -8,16 +8,19 @@ from openai import OpenAI
 from pydantic import BaseModel
 
 SYSTEM_PROMPT = r"""
-Extract and summarize the first ten sets of ChangeLogs or Release Notes based on their dates.
+Extract and summarize the first ten sets of ChangeLogs or Release Notes according to their dates.
+
+For MAX Exchange, ensure to include relevant details from the changelog and release notes that highlight significant updates, improvements, or changes in functionality.
+
 
 Guidelines:
-- Ensure the output conforms to the specified JSON schema.
-- Only use information directly from the provided context; avoid placeholder or generic examples.
-- Exclude any upcoming changes that lack explicit dates.
-- Standardize dates formatted as '2024-Sep-20' to '2024-09-20'.
-- If no changelog or release note exists for a particular date, skip the extraction for that date.
-- Output the results in Markdown format.
-"""
+- Ensure the output adheres to the specified JSON schema.
+- Use only information directly from the provided context; avoid placeholder or generic examples.
+- Exclude upcoming changes that do not have explicit dates.
+- Standardize date formats from '2024-Sep-20' to '2024-09-20'.
+- If no changelog or release note is available for a given date, skip the extraction for that date.
+- Present the results in Markdown format.
+"""  # noqa
 
 
 class ChangeLog(BaseModel):
