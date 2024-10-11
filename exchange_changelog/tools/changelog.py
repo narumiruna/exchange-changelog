@@ -7,7 +7,7 @@ from loguru import logger
 from openai import OpenAI
 from pydantic import BaseModel
 
-PROMPT_TEMPLATE = r"""
+SYSTEM_PROMPT = r"""
 Extract and summarize the first ten sets of ChangeLogs or Release Notes based on their dates.
 
 Guidelines:
@@ -17,17 +17,12 @@ Guidelines:
 - Standardize dates formatted as '2024-Sep-20' to '2024-09-20'.
 - If no changelog or release note exists for a particular date, skip the extraction for that date.
 - Output the results in Markdown format.
-
-Context:
-{context}
-
-Changelog:
 """
 
 
 class ChangeLog(BaseModel):
     date: str
-    content: str
+    markdown_content: str
     keywords: list[str]
 
 
@@ -35,22 +30,21 @@ class ChangeLogList(BaseModel):
     items: list[ChangeLog]
 
     def pritty_repr(self) -> str:
-        format_string = ""
+        result = []
 
         prev_date = None
         for changelog in self.items:
             if prev_date != changelog.date:
                 prev_date = changelog.date
-                format_string += f"## {changelog.date}\n"
-            format_string += f"{changelog.content}\n"
+                result.append(f"## {changelog.date}")
+            result.append(changelog.markdown_content)
 
             if changelog.keywords:
-                format_string += "Keywords: "
-                format_string += ", ".join(changelog.keywords)
-                format_string += "\n"
+                result.append(f"Keywords: {', '.join(changelog.keywords)}")
 
-            format_string += "\n"
-        return format_string
+            result.append("\n")
+
+        return "\n".join(result)
 
 
 def select_recent_changelogs(changelog_list: ChangeLogList, num_days: int) -> ChangeLogList:
@@ -71,10 +65,12 @@ def extract_changelog(text: str) -> ChangeLogList | None:
             model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
             messages=[
                 {
+                    "role": "system",
+                    "content": SYSTEM_PROMPT,
+                },
+                {
                     "role": "user",
-                    "content": PROMPT_TEMPLATE.format(
-                        context=text,
-                    ),
+                    "content": text,
                 },
             ],
             response_format=ChangeLogList,
