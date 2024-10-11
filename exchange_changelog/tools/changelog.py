@@ -12,12 +12,11 @@ Extract and summarize the first ten sets of ChangeLogs or Release Notes accordin
 
 For MAX Exchange, ensure to include relevant details from the changelog and release notes that highlight significant updates, improvements, or changes in functionality.
 
-
 Guidelines:
 - Ensure the output adheres to the specified JSON schema.
 - Use only information directly from the provided context; avoid placeholder or generic examples.
 - Exclude upcoming changes that do not have explicit dates.
-- Standardize date formats from '2024-Sep-20' to '2024-09-20'.
+- Standardize and validate date formats to 'YYYY-MM-DD' (e.g., convert '2024-Sep-20' to '2024-09-20').
 - If no changelog or release note is available for a given date, skip the extraction for that date.
 - Present the results in Markdown format.
 """  # noqa
