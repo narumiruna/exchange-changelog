@@ -2,8 +2,8 @@ name: Docker Cron
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 0 */7 * *"
+  # schedule:
+  #   - cron: "0 0 */7 * *"
 
 jobs:
   cron:
@@ -18,5 +18,9 @@ jobs:
         SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
         SLACK_CHANNEL: ${{ vars.SLACK_CHANNEL }}
     steps:
+      - name: Check for dockerenv file
+        run: (ls /.dockerenv && echo Found dockerenv) || (echo No dockerenv)
       - run: |
+          cp /.dockerenv /app/.env
           python main.py
+        working-directory: /app
