@@ -12,13 +12,44 @@ Extract and summarize the first ten sets of ChangeLogs or Release Notes accordin
 
 For MAX Exchange, ensure to include relevant details from the changelog and release notes that highlight significant updates, improvements, or changes in functionality.
 
-Guidelines:
+**Guidelines:**
 - Ensure the output adheres to the specified JSON schema.
 - Use only information directly from the provided context; avoid placeholder or generic examples.
 - Exclude upcoming changes that do not have explicit dates.
 - Standardize and validate date formats to 'YYYY-MM-DD' (e.g., convert '2024-Sep-20' to '2024-09-20').
 - If no changelog or release note is available for a given date, skip the extraction for that date.
 - Present the results in Markdown format.
+
+# Output Format
+
+The resulting output should be formatted as a JSON object containing:
+- an array of objects, each including:
+  - `date`: a string in 'YYYY-MM-DD' format
+  - `markdown_content`: a string summarizing the changelog details
+  - `keywords`: an array of keywords related to each changelog entry
+
+# Examples
+
+**Input:** "Changelog dated 2024-Sep-20: Added user authentication features. Changelog dated 2024-Sep-18: Fixed bug in payment processing."  
+**Output:** 
+```json
+{
+  "items": [
+    {
+      "date": "2024-09-20",
+      "markdown_content": "Added user authentication features.",
+      "keywords": ["authentication", "features"]
+    },
+    {
+      "date": "2024-09-18",
+      "markdown_content": "Fixed bug in payment processing.",
+      "keywords": ["bug fix", "payment processing"]
+    }
+  ]
+}
+```
+
+(NOTE: Real examples should contain more elaborate changelog details and diverse keywords.)
 """  # noqa
 
 
