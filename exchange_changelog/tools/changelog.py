@@ -25,24 +25,24 @@ For MAX Exchange, ensure to include relevant details from the changelog and rele
 The resulting output should be formatted as a JSON object containing:
 - an array of objects, each including:
   - `date`: a string in 'YYYY-MM-DD' format
-  - `markdown_content`: a string summarizing the changelog details
+  - `markdown_content`: a string summarizing the changelog details in a bullet-point list
   - `keywords`: an array of keywords related to each changelog entry
 
 # Examples
 
-**Input:** "Changelog dated 2024-Sep-20: Added user authentication features. Changelog dated 2024-Sep-18: Fixed bug in payment processing."  
+**Input:** "Changelog dated 2024-Sep-20: - Added user authentication features. - Improved dashboard performance. Changelog dated 2024-Sep-18: - Fixed bug in payment processing."  
 **Output:** 
 ```json
 {
   "items": [
     {
       "date": "2024-09-20",
-      "markdown_content": "Added user authentication features.",
-      "keywords": ["authentication", "features"]
+      "markdown_content": "- Added user authentication features.\n- Improved dashboard performance.",
+      "keywords": ["authentication", "dashboard", "performance"]
     },
     {
       "date": "2024-09-18",
-      "markdown_content": "Fixed bug in payment processing.",
+      "markdown_content": "- Fixed bug in payment processing.",
       "keywords": ["bug fix", "payment processing"]
     }
   ]
