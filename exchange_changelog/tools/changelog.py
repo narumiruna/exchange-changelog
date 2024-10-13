@@ -55,7 +55,7 @@ The resulting output should be formatted as a JSON object containing:
     {
       "date": "2024-09-18",
       "markdown_content": "- Fixed bug in payment processing.",
-      "keywords": ["bug fix", "payment processing"],
+      "keywords": ["payment processing"],
       "categories": ["BUG_FIXES"]
     }
   ]
