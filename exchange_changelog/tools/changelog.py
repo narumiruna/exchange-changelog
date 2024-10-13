@@ -6,7 +6,7 @@ from enum import Enum
 from loguru import logger
 from pydantic import BaseModel
 
-from .llm import parse_completion
+from ..llm.openai import parse_completion
 
 SYSTEM_PROMPT = r"""
 Extract and summarize the first ten sets of ChangeLogs or Release Notes according to their dates.
@@ -55,7 +55,7 @@ The resulting output should be formatted as a JSON object containing:
     {
       "date": "2024-09-18",
       "markdown_content": "- Fixed bug in payment processing.",
-      "keywords": ["bug fix", "payment processing"],
+      "keywords": ["payment processing"],
       "categories": ["BUG_FIXES"]
     }
   ]
