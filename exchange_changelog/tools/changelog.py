@@ -1,6 +1,7 @@
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
+from enum import Enum
 
 from loguru import logger
 from pydantic import BaseModel
@@ -26,11 +27,21 @@ The resulting output should be formatted as a JSON object containing:
 - an array of objects, each including:
   - `date`: a string in 'YYYY-MM-DD' format
   - `markdown_content`: a string summarizing the changelog details in a bullet-point list
-  - `keywords`: an array of keywords related to each changelog entry
+  - `keywords`: an array of keywords related to each changelog entry (excluding categories)
+  - `categories`: an array of strings indicating the categories associated with the update (e.g., BREAKING_CHANGES, NEW_FEATURES, BUG_FIXES, DEPRECATIONS, PERFORMANCE_IMPROVEMENTS, SECURITY_UPDATES)
 
 # Examples
 
-**Input:** "Changelog dated 2024-Sep-20: - Added user authentication features. - Improved dashboard performance. Changelog dated 2024-Sep-18: - Fixed bug in payment processing."  
+**Input:**
+```plaintext
+2024-09-20
+- Added user authentication features.
+- Improved dashboard performance.
+
+2024-09-18:
+- Fixed bug in payment processing.
+```
+
 **Output:** 
 ```json
 {
@@ -38,12 +49,14 @@ The resulting output should be formatted as a JSON object containing:
     {
       "date": "2024-09-20",
       "markdown_content": "- Added user authentication features.\n- Improved dashboard performance.",
-      "keywords": ["authentication", "dashboard", "performance"]
+      "keywords": ["authentication", "dashboard", "performance"],
+      "categories": ["NEW_FEATURES", "PERFORMANCE_IMPROVEMENTS"]
     },
     {
       "date": "2024-09-18",
       "markdown_content": "- Fixed bug in payment processing.",
-      "keywords": ["bug fix", "payment processing"]
+      "keywords": ["bug fix", "payment processing"],
+      "categories": ["BUG_FIXES"]
     }
   ]
 }
@@ -53,10 +66,20 @@ The resulting output should be formatted as a JSON object containing:
 """  # noqa
 
 
+class Category(str, Enum):
+    BREAKING_CHANGES = "BREAKING_CHANGES"
+    NEW_FEATURES = "NEW_FEATURES"
+    DEPRECATIONS = "DEPRECATIONS"
+    BUG_FIXES = "BUG_FIXES"
+    PERFORMANCE_IMPROVEMENTS = "PERFORMANCE_IMPROVEMENTS"
+    SECURITY_UPDATES = "SECURITY_UPDATES"
+
+
 class ChangeLog(BaseModel):
     date: str
     markdown_content: str
     keywords: list[str]
+    categories: list[Category]
 
 
 class ChangeLogList(BaseModel):
@@ -74,6 +97,9 @@ class ChangeLogList(BaseModel):
 
             if changelog.keywords:
                 result.append(f"Keywords: {', '.join(changelog.keywords)}")
+
+            if changelog.categories:
+                result.append(f"Categories: {', '.join(changelog.categories)}")
 
         return "\n\n".join(result)
 
