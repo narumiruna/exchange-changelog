@@ -1,11 +1,11 @@
-import os
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
 
 from loguru import logger
-from openai import OpenAI
 from pydantic import BaseModel
+
+from .llm import parse_completion
 
 SYSTEM_PROMPT = r"""
 Extract and summarize the first ten sets of ChangeLogs or Release Notes according to their dates.
@@ -92,12 +92,9 @@ def select_recent_changelogs(changelog_list: ChangeLogList, num_days: int) -> Ch
 
 
 def extract_changelog(text: str) -> ChangeLogList | None:
-    client = OpenAI()
-
     # https://platform.openai.com/docs/guides/structured-outputs
     try:
-        completion = client.beta.chat.completions.parse(
-            model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+        return parse_completion(
             messages=[
                 {
                     "role": "system",
@@ -110,20 +107,6 @@ def extract_changelog(text: str) -> ChangeLogList | None:
             ],
             response_format=ChangeLogList,
         )
-
-        if not completion.choices:
-            logger.warning("no completion choices")
-            return None
-
-        response = completion.choices[0].message
-        if response.parsed:
-            return response.parsed
-        elif response.refusal:
-            logger.warning("unable to parse the changelog: {}", response.refusal)
-            return None
-        else:
-            logger.warning("no parsed response")
-            return None
     except Exception as e:
         logger.error("unable to parse the changelog: {}", e)
         return None
