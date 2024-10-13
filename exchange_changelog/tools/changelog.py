@@ -6,7 +6,7 @@ from enum import Enum
 from loguru import logger
 from pydantic import BaseModel
 
-from .llm import parse_completion
+from ..llm.openai import parse_completion
 
 SYSTEM_PROMPT = r"""
 Extract and summarize the first ten sets of ChangeLogs or Release Notes according to their dates.

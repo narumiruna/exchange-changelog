@@ -1,93 +1,100 @@
 from __future__ import annotations
 
-import json
-import os
-from datetime import date
+from typing import TypedDict
 
-from google.generativeai import GenerationConfig
-from google.generativeai import GenerativeModel
-from google.generativeai import configure
-from google.generativeai.types import ContentsType
-from google.generativeai.types import GenerateContentResponse
-from google.generativeai.types import HarmBlockThreshold
-from google.generativeai.types import HarmCategory
-from loguru import logger
-from typing_extensions import TypedDict
+from ..llm.gemini import generate_content
+from .changelog import ChangeLogList
 
-PROMPT_TEMPLATE = r"""
-Based on the context provided, generate the changelog or release notes for the period from {from_date} to {to_date}. Ensure compliance with the JSON schema and summarize the changelog in Markdown format.
+SYSTEM_PROMPT = r"""
+Extract and summarize the first ten sets of ChangeLogs or Release Notes according to their dates.
 
-Rules:
-- Include only changelog or release notes with confirmed dates within {from_date} and {to_date}.
-- All entries must be directly derived from the provided context, avoiding placeholder examples.
-- Ignore any upcoming changes that lack explicit dates.
-- If no changelog or release notes are available for the specified date range, return an empty string.
-- Convert dates formatted as '2024-Sep-20' to '2024-09-20'.
+For MAX Exchange, ensure to include relevant details from the changelog and release notes that highlight significant updates, improvements, or changes in functionality.
+
+**Guidelines:**
+- Ensure the output adheres to the specified JSON schema.
+- Use only information directly from the provided context; avoid placeholder or generic examples.
+- Exclude upcoming changes that do not have explicit dates.
+- Standardize and validate date formats to 'YYYY-MM-DD' (e.g., convert '2024-Sep-20' to '2024-09-20').
+- If no changelog or release note is available for a given date, skip the extraction for that date.
 - Present the results in Markdown format.
 
-Context:
-{context}
+# Output Format
 
-Changelog:
+The resulting output should be formatted as a JSON object containing:
+- an array of objects, each including:
+  - `date`: a string in 'YYYY-MM-DD' format
+  - `markdown_content`: a string summarizing the changelog details in a bullet-point list
+  - `keywords`: an array of keywords related to each changelog entry (excluding categories)
+  - `categories`: an array of strings indicating the categories associated with the update (e.g., BREAKING_CHANGES, NEW_FEATURES, BUG_FIXES, DEPRECATIONS, PERFORMANCE_IMPROVEMENTS, SECURITY_UPDATES)
+
+# Examples
+
+**Input:**
+```plaintext
+2024-09-20
+- Added user authentication features.
+- Improved dashboard performance.
+
+2024-09-18:
+- Fixed bug in payment processing.
+```
+
+**Output:** 
+```json
+{
+  "items": [
+    {
+      "date": "2024-09-20",
+      "markdown_content": "- Added user authentication features.\n- Improved dashboard performance.",
+      "keywords": ["authentication", "dashboard", "performance"],
+      "categories": ["NEW_FEATURES", "PERFORMANCE_IMPROVEMENTS"]
+    },
+    {
+      "date": "2024-09-18",
+      "markdown_content": "- Fixed bug in payment processing.",
+      "keywords": ["bug fix", "payment processing"],
+      "categories": ["BUG_FIXES"]
+    }
+  ]
+}
+```
+
+(NOTE: Real examples should contain more elaborate changelog details and diverse keywords.)
 """  # noqa
 
 
-class ChangeLog(TypedDict):
+class ChangeLogDict(TypedDict):
     date: str
-    text: str
+    markdown_content: str
+    keywords: list[str]
+
+    def pritty_repr(self) -> str:
+        result = []
+
+        prev_date = None
+        for changelog in self.items:
+            if prev_date != changelog["date"]:
+                prev_date = changelog["date"]
+                result.append(f"## {changelog["date"]}")
+            result.append(changelog["markdown_content"])
+
+            if changelog["keywords"]:
+                result.append(f"Keywords: {', '.join(changelog["keywords"])}")
+
+        return "\n\n".join(result)
 
 
-class Gemini:
-    def __init__(
-        self,
-        model: str = "gemini-1.5-pro",
-        temperature: float = 0,
-    ) -> None:
-        self.model = model
-        self.temperature = temperature
-
-        generation_config = GenerationConfig(
-            response_mime_type="application/json",
-            response_schema=list[ChangeLog],
-        )
-
-        configure(api_key=os.environ["GOOGLE_API_KEY"])
-        self.client = GenerativeModel(
-            model_name=model,
-            generation_config=generation_config,
-        )
-
-        self.safety_settings = {
-            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-        }
-
-    def __call__(self, contents: ContentsType) -> GenerateContentResponse:
-        return self.client.generate_content(
-            contents=contents,
-            # safety_settings=self.safety_settings,
-        )
+class ChangeLogListDict(TypedDict):
+    items: list[ChangeLogDict]
 
 
-def list_changelog(text: str, from_date: date, to_date: date) -> dict:
-    gemini = Gemini()
-    response = gemini(
-        [
-            PROMPT_TEMPLATE.format(
-                context=text,
-                from_date=from_date,
-                to_date=to_date,
-            ),
+def extract_changelog(text: str) -> ChangeLogList:
+    d = generate_content(
+        contents=[
+            SYSTEM_PROMPT,
+            "Input: " + text,
         ],
+        response_schema=ChangeLogListDict,
     )
 
-    if not response.parts:
-        return {}
-
-    try:
-        return json.loads(response.text)
-    except json.JSONDecodeError as e:
-        logger.error(e)
-        return {}
+    return ChangeLogList.model_validate(d)
