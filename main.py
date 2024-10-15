@@ -12,6 +12,7 @@ from exchange_changelog.loaders import load_html_with_singlefile
 from exchange_changelog.slack import post_slack_message
 from exchange_changelog.tools.changelog import extract_changelog
 from exchange_changelog.tools.changelog import select_recent_changelogs
+from exchange_changelog.tools.upcoming_changes import extract_upcoming_changes
 
 
 def load_html(url: str, method: Literal["httpx", "singlefile"]) -> str:
@@ -34,6 +35,8 @@ def main(config_file: Path, output_file: Path) -> None:
 
     output_string = ""
     for doc in cfg.docs:
+        output_string += f"# [{doc.name}]({doc.url})\n\n"
+
         text = load_html(doc.url, doc.method)
         logger.info("text length: {}", len(text))
 
@@ -51,7 +54,12 @@ def main(config_file: Path, output_file: Path) -> None:
 
         changelog_list = select_recent_changelogs(changelog_list, cfg.num_days)
 
-        output_string += f"# {doc.name}\n{doc.url}\n{changelog_list.pritty_repr()}\n\n"
+        # extract upcoming changes
+        upcoming_changes = extract_upcoming_changes(text)
+        if upcoming_changes is not None and upcoming_changes.changes:
+            output_string += upcoming_changes.pretty_repr() + "\n\n"
+
+        output_string += changelog_list.pritty_repr() + "\n\n"
 
         with output_file.open("w") as f:
             f.write(output_string)
