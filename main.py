@@ -34,6 +34,8 @@ def main(config_file: Path, output_file: Path) -> None:
 
     output_string = ""
     for doc in cfg.docs:
+        output_string += f"# [{doc.name}]({doc.url})\n\n"
+
         text = load_html(doc.url, doc.method)
         logger.info("text length: {}", len(text))
 
@@ -51,7 +53,7 @@ def main(config_file: Path, output_file: Path) -> None:
 
         changelog_list = select_recent_changelogs(changelog_list, cfg.num_days)
 
-        output_string += f"# {doc.name}\n{doc.url}\n{changelog_list.pritty_repr()}\n\n"
+        output_string += changelog_list.pritty_repr() + "\n\n"
 
         with output_file.open("w") as f:
             f.write(output_string)
