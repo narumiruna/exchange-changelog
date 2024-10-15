@@ -9,14 +9,14 @@ from pydantic import BaseModel
 from ..llm.openai import parse_completion
 
 SYSTEM_PROMPT = r"""
-Extract and summarize the first ten sets of ChangeLogs or Release Notes according to their dates.
+Extract and summarize the first ten sets of changelog or release notes according to their dates.
+Extract and summarize upcoming changes. If the main heading "Upcoming Changes" is present, extract and summarize the content beneath it; if not, leave the output blank.
 
 For MAX Exchange, ensure to include relevant details from the changelog and release notes that highlight significant updates, improvements, or changes in functionality.
 
 **Guidelines:**
 - Ensure the output adheres to the specified JSON schema.
 - Use only information directly from the provided context; avoid placeholder or generic examples.
-- Exclude upcoming changes that do not have explicit dates.
 - Standardize and validate date formats to 'YYYY-MM-DD' (e.g., convert '2024-Sep-20' to '2024-09-20').
 - If no changelog or release note is available for a given date, skip the extraction for that date.
 - Present the results in Markdown format.
@@ -58,7 +58,8 @@ The resulting output should be formatted as a JSON object containing:
       "keywords": ["payment processing"],
       "categories": ["BUG_FIXES"]
     }
-  ]
+  ],
+  "upcoming_changes": []
 }
 ```
 
@@ -82,11 +83,25 @@ class ChangeLog(BaseModel):
     categories: list[Category]
 
 
+class UpcomingChange(BaseModel):
+    markdown_content: str
+    categories: list[Category]
+
+
 class ChangeLogList(BaseModel):
     items: list[ChangeLog]
+    upcoming_changes: list[UpcomingChange]
 
     def pritty_repr(self) -> str:
         result = []
+
+        if self.upcoming_changes:
+            result.append("## Upcoming Changes")
+            for upcoming_change in self.upcoming_changes:
+                result.append(upcoming_change.markdown_content)
+
+                if upcoming_change.categories:
+                    result.append(f"Categories: {', '.join(upcoming_change.categories)}")
 
         prev_date = None
         for changelog in self.items:
@@ -105,7 +120,7 @@ class ChangeLogList(BaseModel):
 
 
 def select_recent_changelogs(changelog_list: ChangeLogList, num_days: int) -> ChangeLogList:
-    new_changelog_list: ChangeLogList = ChangeLogList(items=[])
+    new_changelog_list: ChangeLogList = ChangeLogList(items=[], upcoming_changes=changelog_list.upcoming_changes)
     for item in changelog_list.items:
         try:
             item_date = datetime.strptime(item.date, "%Y-%m-%d").date()
