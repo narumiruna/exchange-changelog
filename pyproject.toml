@@ -18,6 +18,7 @@ google-generativeai = "^0.8.3"
 markdownify = "^0.13.1"
 pyyaml = "^6.0.2"
 slack-sdk = "^3.33.1"
+gradio = "^5.1.0"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -1,8 +1,10 @@
+import gradio as gr
 from dotenv import find_dotenv
 from dotenv import load_dotenv
 from loguru import logger
 
 from exchange_changelog.llm import create_completion
+from exchange_changelog.utils import save_text
 
 META_PROMPT = """
 Given a task description or existing prompt, produce a detailed system prompt to guide a language model in completing the task effectively.
@@ -51,15 +53,26 @@ The final prompt you output should adhere to the following structure below. Do n
 """.strip()  # noqa
 
 
+def generate_response(message, history):
+    messages = [{"role": "system", "content": META_PROMPT}]
+    messages += history
+    messages += [{"role": "user", "content": message}]
+
+    logger.info("messages: {}", messages)
+
+    try:
+        response = create_completion(messages)
+        logger.info("response: {}", response)
+        save_text(response, "prompt.txt")
+        return response
+    except Exception as e:
+        logger.error("unable to generate response: {}", e)
+        return str(e)
+
+
 def main() -> None:
     load_dotenv(find_dotenv())
-
-    messages = [{"role": "system", "content": META_PROMPT}]
-    while True:
-        message = input("Enter a message: ")
-        messages += [{"role": "user", "content": message}]
-        response = create_completion(messages)
-        logger.info("response:\n{}", response)
+    gr.ChatInterface(generate_response, type="messages").launch()
 
 
 if __name__ == "__main__":
