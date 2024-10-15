@@ -1,4 +1,3 @@
-import gradio as gr
 from dotenv import find_dotenv
 from dotenv import load_dotenv
 from loguru import logger
@@ -52,25 +51,15 @@ The final prompt you output should adhere to the following structure below. Do n
 """.strip()  # noqa
 
 
-def generate_response(message, history):
-    messages = [{"role": "system", "content": META_PROMPT}]
-    messages += history
-    messages += [{"role": "user", "content": message}]
-
-    logger.info("messages: {}", messages)
-
-    try:
-        response = create_completion(messages)
-        logger.info("response: {}", response)
-        return response
-    except Exception as e:
-        logger.error("unable to generate response: {}", e)
-        return str(e)
-
-
 def main() -> None:
     load_dotenv(find_dotenv())
-    gr.ChatInterface(generate_response, type="messages").launch()
+
+    messages = [{"role": "system", "content": META_PROMPT}]
+    while True:
+        message = input("Enter a message: ")
+        messages += [{"role": "user", "content": message}]
+        response = create_completion(messages)
+        logger.info("response:\n{}", response)
 
 
 if __name__ == "__main__":
