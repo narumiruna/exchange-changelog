@@ -110,8 +110,8 @@ class ChangeLogList(BaseModel):
                 result.append(f"## {changelog.date}")
             result.append(changelog.markdown_content)
 
-            if changelog.keywords:
-                result.append(f"Keywords: {', '.join(changelog.keywords)}")
+            # if changelog.keywords:
+            #     result.append(f"Keywords: {', '.join(changelog.keywords)}")
 
             if changelog.categories:
                 result.append(f"Categories: {', '.join(changelog.categories)}")
