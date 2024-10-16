@@ -5,9 +5,10 @@ import tempfile
 from pathlib import Path
 
 import httpx
-from bs4 import BeautifulSoup
 from loguru import logger
 from markdownify import markdownify
+
+from ..utils import load_text
 
 
 def remove_base64_image(markdown_text: str) -> str:
@@ -49,9 +50,8 @@ def save_html_with_singlefile(url: str, cookies_file: str | None = None) -> str:
 def load_html_with_singlefile(url: str) -> str:
     f = save_html_with_singlefile(url)
 
-    with open(f, "rb") as fp:
-        soup = BeautifulSoup(fp, "html.parser")
-        text = soup.get_text(strip=True)
+    text = markdownify(load_text(f), strip=["a", "img"])
+    text = remove_base64_image(text)
     return text
 
 
