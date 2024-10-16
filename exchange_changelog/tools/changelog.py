@@ -68,12 +68,12 @@ The resulting output should be formatted as a JSON object containing:
 
 
 class Category(str, Enum):
-    BREAKING_CHANGES = "BREAKING_CHANGES"
-    NEW_FEATURES = "NEW_FEATURES"
-    DEPRECATIONS = "DEPRECATIONS"
-    BUG_FIXES = "BUG_FIXES"
-    PERFORMANCE_IMPROVEMENTS = "PERFORMANCE_IMPROVEMENTS"
-    SECURITY_UPDATES = "SECURITY_UPDATES"
+    BREAKING_CHANGES = "breaking changes"
+    NEW_FEATURES = "new features"
+    DEPRECATIONS = "deprecations"
+    BUG_FIXES = "bug fixes"
+    PERFORMANCE_IMPROVEMENTS = "performance improvements"
+    SECURITY_UPDATES = "security updates"
 
 
 class Change(BaseModel):
