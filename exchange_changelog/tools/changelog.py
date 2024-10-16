@@ -64,7 +64,7 @@ The resulting output should be formatted as a JSON object containing:
 ```
 
 (NOTE: Real examples should contain more elaborate changelog details and diverse keywords.)
-"""  # noqa
+""".strip()  # noqa
 
 
 class Category(str, Enum):
@@ -82,10 +82,25 @@ class Changelog(BaseModel):
     keywords: list[str]
     categories: list[Category]
 
+    def pritty_repr(self) -> str:
+        s = f"*{self.date}*\n"
+        s += self.markdown_content + "\n"
+        if self.keywords:
+            s += f"Keywords: {', '.join(self.keywords)}\n"
+        if self.categories:
+            s += f"Categories: {', '.join(self.categories)}\n"
+        return s
+
 
 class UpcomingChange(BaseModel):
     markdown_content: str
     categories: list[Category]
+
+    def pritty_repr(self) -> str:
+        s = self.markdown_content + "\n"
+        if self.categories:
+            s += f"Categories: {', '.join(self.categories)}\n"
+        return s
 
 
 class ChangelogList(BaseModel):
@@ -93,32 +108,19 @@ class ChangelogList(BaseModel):
     upcoming_changes: list[UpcomingChange]
 
     def pritty_repr(self, name: str | None, url: str | None = None) -> str:
-        result = []
+        s = ""
         if name and url:
-            result.append(f"# [{name}]({url})\n")
+            s += f"# [{name}]({url})\n"
 
         if self.upcoming_changes:
-            result.append("## Upcoming Changes")
+            s += "*Upcoming Changes*\n"
             for upcoming_change in self.upcoming_changes:
-                result.append(upcoming_change.markdown_content)
+                s += upcoming_change.pritty_repr()
 
-                if upcoming_change.categories:
-                    result.append(f"Categories: {', '.join(upcoming_change.categories)}")
-
-        prev_date = None
         for changelog in self.items:
-            if prev_date != changelog.date:
-                prev_date = changelog.date
-                result.append(f"## {changelog.date}")
-            result.append(changelog.markdown_content)
+            s += changelog.pritty_repr()
 
-            # if changelog.keywords:
-            #     result.append(f"Keywords: {', '.join(changelog.keywords)}")
-
-            if changelog.categories:
-                result.append(f"Categories: {', '.join(changelog.categories)}")
-
-        return "\n\n".join(result)
+        return s
 
 
 def select_recent_changelogs(changelog_list: ChangelogList, num_days: int) -> ChangelogList:
