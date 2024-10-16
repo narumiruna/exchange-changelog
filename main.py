@@ -58,13 +58,13 @@ def main(config_file: Path, output_file: Path) -> None:
 
     output_string = ""
     for doc in cfg.docs:
-        changelogs = extract_recent_changelog(doc, cfg)
+        changelog = extract_recent_changelog(doc, cfg)
 
-        if changelogs.changes:
-            logger.debug("info:\n{}", changelogs.pritty_repr(doc.name, doc.url))
-            post_slack_message(changelogs.pritty_repr(doc.name, doc.url))
+        if changelog.changes:
+            logger.debug("info:\n{}", changelog.pritty_repr(doc.name, doc.url))
+            post_slack_message(changelog.pritty_repr(doc.name, doc.url))
 
-        output_string += changelogs.pritty_repr(doc.name, doc.url) + "\n\n"
+        output_string += changelog.pritty_repr(doc.name, doc.url) + "\n\n"
 
         with output_file.open("w") as f:
             f.write(output_string)
