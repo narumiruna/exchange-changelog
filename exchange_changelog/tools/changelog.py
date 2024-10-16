@@ -9,16 +9,16 @@ from pydantic import BaseModel
 from ..llm.openai import parse_completion
 
 SYSTEM_PROMPT = r"""
-Extract and summarize the first ten sets of changelog or release notes according to their dates.
+Extract the first ten sets of changes or release notes according to their dates from changelog or release note page.
 Extract and summarize upcoming changes. If the main heading "Upcoming Changes" is present, extract and summarize the content beneath it; if not, leave the output blank.
 
-For MAX Exchange, ensure to include relevant details from the changelog and release notes that highlight significant updates, improvements, or changes in functionality.
+For MAX Exchange, ensure to include relevant details from the changes and release notes that highlight significant updates, improvements, or changes in functionality.
 
 **Guidelines:**
 - Ensure the output adheres to the specified JSON schema.
 - Use only information directly from the provided context; avoid placeholder or generic examples.
 - Standardize and validate date formats to 'YYYY-MM-DD' (e.g., convert '2024-Sep-20' to '2024-09-20').
-- If no changelog or release note is available for a given date, skip the extraction for that date.
+- If no change or release note is available for a given date, skip the extraction for that date.
 - Present the results in Markdown format.
 
 # Output Format
@@ -26,8 +26,8 @@ For MAX Exchange, ensure to include relevant details from the changelog and rele
 The resulting output should be formatted as a JSON object containing:
 - an array of objects, each including:
   - `date`: a string in 'YYYY-MM-DD' format
-  - `markdown_content`: a string summarizing the changelog details in a bullet-point list
-  - `keywords`: an array of keywords related to each changelog entry (excluding categories)
+  - `markdown_content`: a string summarizing the change details in a bullet-point list
+  - `keywords`: an array of keywords related to each change entry (excluding categories)
   - `categories`: an array of strings indicating the categories associated with the update (e.g., BREAKING_CHANGES, NEW_FEATURES, BUG_FIXES, DEPRECATIONS, PERFORMANCE_IMPROVEMENTS, SECURITY_UPDATES)
 
 # Examples
@@ -45,7 +45,7 @@ The resulting output should be formatted as a JSON object containing:
 **Output:** 
 ```json
 {
-  "items": [
+  "changes": [
     {
       "date": "2024-09-20",
       "markdown_content": "- Added user authentication features.\n- Improved dashboard performance.",
@@ -63,7 +63,7 @@ The resulting output should be formatted as a JSON object containing:
 }
 ```
 
-(NOTE: Real examples should contain more elaborate changelog details and diverse keywords.)
+(NOTE: Real examples should contain more elaborate change details and diverse keywords.)
 """.strip()  # noqa
 
 
@@ -76,7 +76,7 @@ class Category(str, Enum):
     SECURITY_UPDATES = "SECURITY_UPDATES"
 
 
-class Changelog(BaseModel):
+class Change(BaseModel):
     date: str
     markdown_content: str
     keywords: list[str]
@@ -103,8 +103,8 @@ class UpcomingChange(BaseModel):
         return s
 
 
-class ChangelogList(BaseModel):
-    items: list[Changelog]
+class Changelog(BaseModel):
+    changes: list[Change]
     upcoming_changes: list[UpcomingChange]
 
     def pritty_repr(self, name: str | None, url: str | None = None) -> str:
@@ -117,41 +117,38 @@ class ChangelogList(BaseModel):
             for upcoming_change in self.upcoming_changes:
                 s += upcoming_change.pritty_repr()
 
-        for changelog in self.items:
+        for changelog in self.changes:
             s += changelog.pritty_repr()
 
         return s
 
+    def select_recent_changes(self, num_days: int) -> None:
+        recent_changes = []
 
-def select_recent_changelogs(changelog_list: ChangelogList, num_days: int) -> ChangelogList:
-    new_changelog_list: ChangelogList = ChangelogList(items=[], upcoming_changes=changelog_list.upcoming_changes)
-    for item in changelog_list.items:
-        try:
-            item_date = datetime.strptime(item.date, "%Y-%m-%d").date()
-        except ValueError as e:
-            logger.warning("unable to parse date: {} got error: {}", item.date, e)
-            continue
-        if item_date >= date.today() - timedelta(days=num_days):
-            new_changelog_list.items.append(item)
-    return new_changelog_list
+        for change in self.changes:
+            try:
+                item_date = datetime.strptime(change.date, "%Y-%m-%d").date()
+            except ValueError as e:
+                logger.warning("unable to parse date: {} got error: {}", change.date, e)
+                continue
+            if item_date >= date.today() - timedelta(days=num_days):
+                recent_changes.append(change)
+
+        self.changes = recent_changes
 
 
-def extract_changelog(text: str) -> ChangelogList | None:
+def extract_changelog(text: str) -> Changelog:
     # https://platform.openai.com/docs/guides/structured-outputs
-    try:
-        return parse_completion(
-            messages=[
-                {
-                    "role": "system",
-                    "content": SYSTEM_PROMPT,
-                },
-                {
-                    "role": "user",
-                    "content": text,
-                },
-            ],
-            response_format=ChangelogList,
-        )
-    except Exception as e:
-        logger.error("unable to parse the changelog: {}", e)
-        return None
+    return parse_completion(
+        messages=[
+            {
+                "role": "system",
+                "content": SYSTEM_PROMPT,
+            },
+            {
+                "role": "user",
+                "content": text,
+            },
+        ],
+        response_format=Changelog,
+    )
