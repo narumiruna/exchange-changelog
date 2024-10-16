@@ -8,7 +8,7 @@ import httpx
 from loguru import logger
 from markdownify import markdownify
 
-from ..utils import load_text
+from .utils import load_text
 
 
 def remove_base64_image(markdown_text: str) -> str:

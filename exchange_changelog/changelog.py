@@ -6,7 +6,7 @@ from enum import Enum
 from loguru import logger
 from pydantic import BaseModel
 
-from ..llm.openai import parse_completion
+from .llm.openai import parse_completion
 
 SYSTEM_PROMPT = r"""
 Extract the first ten sets of changes or release notes according to their dates from changelog or release note page.
@@ -29,39 +29,6 @@ The resulting output should be formatted as a JSON object containing:
   - `markdown_content`: a string summarizing the change details in a bullet-point list
   - `keywords`: an array of keywords related to each change entry (excluding categories)
   - `categories`: an array of strings indicating the categories associated with the update (e.g., BREAKING_CHANGES, NEW_FEATURES, BUG_FIXES, DEPRECATIONS, PERFORMANCE_IMPROVEMENTS, SECURITY_UPDATES)
-
-# Examples
-
-**Input:**
-```plaintext
-2024-09-20
-- Added user authentication features.
-- Improved dashboard performance.
-
-2024-09-18:
-- Fixed bug in payment processing.
-```
-
-**Output:** 
-```json
-{
-  "changes": [
-    {
-      "date": "2024-09-20",
-      "markdown_content": "- Added user authentication features.\n- Improved dashboard performance.",
-      "keywords": ["authentication", "dashboard", "performance"],
-      "categories": ["NEW_FEATURES", "PERFORMANCE_IMPROVEMENTS"]
-    },
-    {
-      "date": "2024-09-18",
-      "markdown_content": "- Fixed bug in payment processing.",
-      "keywords": ["payment processing"],
-      "categories": ["BUG_FIXES"]
-    }
-  ],
-  "upcoming_changes": []
-}
-```
 
 (NOTE: Real examples should contain more elaborate change details and diverse keywords.)
 """.strip()  # noqa
