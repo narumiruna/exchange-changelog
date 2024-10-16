@@ -55,7 +55,7 @@ def load_html_with_singlefile(url: str) -> str:
     return text
 
 
-def load_html_with_httpx(url: str, markdown: bool = True) -> str:
+def load_html_with_httpx(url: str) -> str:
     logger.info("Loading HTML: {}", url)
 
     headers = {
@@ -66,10 +66,7 @@ def load_html_with_httpx(url: str, markdown: bool = True) -> str:
     resp = httpx.get(url=url, headers=headers, follow_redirects=True)
     resp.raise_for_status()
 
-    if markdown:
-        text = markdownify(resp.text)
-        return remove_base64_image(text)
+    text = markdownify(resp.text, strip=["a", "img"])
+    text = remove_base64_image(text)
 
-    soup = BeautifulSoup(resp.content, "html.parser")
-    text = soup.get_text(strip=True)
     return text
