@@ -22,6 +22,6 @@ def post_slack_message(text: str) -> None:
 
     client = client = WebClient(token=token)
     try:
-        client.chat_postMessage(channel=channel, text=text)
+        client.chat_postMessage(channel=channel, text=text, mrkdwn=True)
     except SlackApiError as e:
         logger.error("slack api error: {}", e)

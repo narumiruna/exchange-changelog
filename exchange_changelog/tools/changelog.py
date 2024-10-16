@@ -76,7 +76,7 @@ class Category(str, Enum):
     SECURITY_UPDATES = "SECURITY_UPDATES"
 
 
-class ChangeLog(BaseModel):
+class Changelog(BaseModel):
     date: str
     markdown_content: str
     keywords: list[str]
@@ -88,12 +88,14 @@ class UpcomingChange(BaseModel):
     categories: list[Category]
 
 
-class ChangeLogList(BaseModel):
-    items: list[ChangeLog]
+class ChangelogList(BaseModel):
+    items: list[Changelog]
     upcoming_changes: list[UpcomingChange]
 
-    def pritty_repr(self) -> str:
+    def pritty_repr(self, name: str | None, url: str | None = None) -> str:
         result = []
+        if name and url:
+            result.append(f"# [{name}]({url})\n")
 
         if self.upcoming_changes:
             result.append("## Upcoming Changes")
@@ -119,8 +121,8 @@ class ChangeLogList(BaseModel):
         return "\n\n".join(result)
 
 
-def select_recent_changelogs(changelog_list: ChangeLogList, num_days: int) -> ChangeLogList:
-    new_changelog_list: ChangeLogList = ChangeLogList(items=[], upcoming_changes=changelog_list.upcoming_changes)
+def select_recent_changelogs(changelog_list: ChangelogList, num_days: int) -> ChangelogList:
+    new_changelog_list: ChangelogList = ChangelogList(items=[], upcoming_changes=changelog_list.upcoming_changes)
     for item in changelog_list.items:
         try:
             item_date = datetime.strptime(item.date, "%Y-%m-%d").date()
@@ -132,7 +134,7 @@ def select_recent_changelogs(changelog_list: ChangeLogList, num_days: int) -> Ch
     return new_changelog_list
 
 
-def extract_changelog(text: str) -> ChangeLogList | None:
+def extract_changelog(text: str) -> ChangelogList | None:
     # https://platform.openai.com/docs/guides/structured-outputs
     try:
         return parse_completion(
@@ -146,7 +148,7 @@ def extract_changelog(text: str) -> ChangeLogList | None:
                     "content": text,
                 },
             ],
-            response_format=ChangeLogList,
+            response_format=ChangelogList,
         )
     except Exception as e:
         logger.error("unable to parse the changelog: {}", e)
