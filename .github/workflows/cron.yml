@@ -20,7 +20,7 @@ jobs:
       - name: Run
         run: |
           poetry install
-          poetry run python main.py -c config/default.yaml -o changelog.md
+          poetry run python main.py -c config/default.yaml -o changelog.md --use-redis
       - uses: danielmcconville/gist-sync-file-action@v2.0.0
         with:
           gistPat: ${{ secrets.GIST_TOKEN }}

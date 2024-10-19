@@ -6,6 +6,7 @@ from dotenv import find_dotenv
 from dotenv import load_dotenv
 from loguru import logger
 
+from exchange_changelog import redis
 from exchange_changelog.changelog import Changelog
 from exchange_changelog.changelog import extract_changelog
 from exchange_changelog.config import APIDoc
@@ -50,7 +51,8 @@ def extract_recent_changelog(api_doc: APIDoc, cfg: Config) -> Changelog:
 @click.command()
 @click.option("-c", "--config-file", type=click.Path(path_type=Path), default="config/default.yaml", help="config file")
 @click.option("-o", "--output-file", type=click.Path(path_type=Path), default="changelog.md", help="output file")
-def main(config_file: Path, output_file: Path) -> None:
+@click.option("-r", "--use-redis", is_flag=True, help="use redis")
+def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
     load_dotenv(find_dotenv())
 
     logger.info("loading config file: {}", config_file)
@@ -61,6 +63,18 @@ def main(config_file: Path, output_file: Path) -> None:
         changelog = extract_recent_changelog(doc, cfg)
 
         if changelog.changes:
+            if use_redis:
+                # filter out already seen changes
+                new_changes = []
+                for change in changelog.changes:
+                    key = f"changelog:{doc.name}:{change.date}"
+                    if redis.exists(key):
+                        logger.info("already exists: {}", key)
+                        continue
+                    new_changes.append(change)
+                    redis.set(key, "1")
+                changelog.changes = new_changes
+
             logger.debug("info:\n{}", changelog.pritty_repr(doc.name, doc.url))
             post_slack_message(changelog.pritty_repr(doc.name, doc.url))
 
