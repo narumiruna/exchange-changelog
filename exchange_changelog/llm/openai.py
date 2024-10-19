@@ -15,7 +15,7 @@ class Message(TypedDict):
 
 
 @functools.cache
-def get_openai_client() -> OpenAI():
+def get_openai_client() -> OpenAI:
     return OpenAI()
 
 
