@@ -24,3 +24,4 @@ class Config(BaseModel):
     num_days: int = 14
     trim_len: int = 20000
     slack_channel: str | None = None
+    prompt: str = ""
