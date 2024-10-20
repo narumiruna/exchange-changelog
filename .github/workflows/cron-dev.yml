@@ -22,6 +22,6 @@ jobs:
         with:
           gistPat: ${{ secrets.GIST_TOKEN }}
           action: update
-          filename: changelog-dev.md
-          gistId: ${{ secrets.GIST_ID }}
+          filename: changelog.md
+          gistId: ${{ secrets.DEV_GIST_ID }}
           createIfNotExists: true
