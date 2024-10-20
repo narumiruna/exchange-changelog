@@ -70,3 +70,17 @@ def load_html_with_httpx(url: str) -> str:
     text = remove_base64_image(text)
 
     return text
+
+
+def load_url_with_playwright(url: str) -> str:
+    from playwright.sync_api import sync_playwright
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        page.goto(url, wait_until="networkidle")
+        text = page.content()
+        browser.close()
+
+    text = markdownify(text, strip=["a", "img"])
+    return text
