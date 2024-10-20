@@ -9,28 +9,29 @@ from pydantic import BaseModel
 from .llm.openai import parse_completion
 
 SYSTEM_PROMPT = r"""
-Extract the first ten sets of changes or release notes according to their dates from changelog or release note page.
-Extract and summarize upcoming changes. If the main heading "Upcoming Changes" is present, extract and summarize the content beneath it; if not, leave the output blank.
+從變更日誌或發行說明頁面中根據日期抽取前五個變更或發行說明。
+如果標題 "Upcoming Changes" 存在，則抽取 upcoming changes 並總結其內容；否則，將輸出留空。
 
-For MAX Exchange, ensure to include relevant details from the changes and release notes that highlight significant updates, improvements, or changes in functionality.
+指南:
+- 僅使用提供的上下文中的信息；避免使用佔位符或通用示例。
+- 將日期格式標準化並驗證為 'YYYY-MM-DD'（例如，將 '2024-Sep-20' 轉換為 '2024-09-20'）。
+- 如果某個日期沒有變更或發佈說明，則跳過該日期的提取。
+- 以 Markdown 格式呈現結果。
+- 真實示例應包含更精細的變更細節和多樣化的關鍵字。
+- 日期應該是實際的日期，而不是示例中的日期。
 
-**Guidelines:**
-- Ensure the output adheres to the specified JSON schema.
-- Use only information directly from the provided context; avoid placeholder or generic examples.
-- Standardize and validate date formats to 'YYYY-MM-DD' (e.g., convert '2024-Sep-20' to '2024-09-20').
-- If no change or release note is available for a given date, skip the extraction for that date.
-- Present the results in Markdown format.
+步驟:
+- 提取所有按日期組織的條目，確保獲得前五個日期的記錄。
+- 如果日期尚未是 'YYYY-MM-DD' 格式，則進行轉換。
+- 對於每個條目，提取日期、變更摘要、關鍵字和類別。
+- 查詢標題為 "Upcoming Changes" 的部分，如果存在，提取摘要和類別；否則，將此部分的輸出設為空白。
 
-# Output Format
-
-The resulting output should be formatted as a JSON object containing:
-- an array of objects, each including:
-  - `date`: a string in 'YYYY-MM-DD' format
-  - `markdown_content`: a string summarizing the change details in a bullet-point list
-  - `keywords`: an array of keywords related to each change entry (excluding categories)
-  - `categories`: an array of strings indicating the categories associated with the update (e.g., BREAKING_CHANGES, NEW_FEATURES, BUG_FIXES, DEPRECATIONS, PERFORMANCE_IMPROVEMENTS, SECURITY_UPDATES)
-
-(NOTE: Real examples should contain more elaborate change details and diverse keywords.)
+輸出值:
+針對相對應的 key，抽取對應的 value。
+- "date": 格式為 "YYYY-MM-DD" 的字符
+- "markdown_content": 以項目符號列表形式包含變更細節的字符串
+- "keywords": 與每個變更條目（不包括類別）相關的關鍵字數組
+- "categories": 指示與更新相關的類別的字符串數組（例如，BREAKING_CHANGES、NEW_FEATURES、BUG_FIXES、DEPRECATIONS、PERFORMANCE_IMPROVEMENTS、SECURITY_UPDATES）
 """.strip()  # noqa
 
 
@@ -114,7 +115,7 @@ def extract_changelog(text: str) -> Changelog:
             },
             {
                 "role": "user",
-                "content": text,
+                "content": f'Input:\n"""\n{text}\n"""\n',
             },
         ],
         response_format=Changelog,
