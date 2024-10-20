@@ -34,9 +34,9 @@ docs:
   # - name: "Bitget Exchange"
   #   url: "https://www.bitget.com/api-doc/common/changelog"
   #   method: httpx
-  # - name: "OKX Exchange"
-  #   url: https://www.okx.com/docs-v5/log_en/#upcoming-changes
-  #   method: httpx
+  - name: "OKX Exchange"
+    url: https://www.okx.com/docs-v5/log_en/#upcoming-changes
+    method: httpx
   # - name: "Huobi Exchange"
   #   url: "https://huobiapi.github.io/docs/spot/v1/en/#change-log"
   #   method: httpx
