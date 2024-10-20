@@ -13,7 +13,7 @@ jobs:
       - name: Run
         run: |
           poetry install
-          poetry run python main.py -c config/default.yaml -o changelog.md
+          poetry run python main.py -c config/default.yaml -o changelog-dev.md
         env:
           OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
