@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Literal
 
 import click
 from dotenv import find_dotenv
@@ -12,18 +11,8 @@ from exchange_changelog.changelog import extract_changelog
 from exchange_changelog.config import APIDoc
 from exchange_changelog.config import Config
 from exchange_changelog.config import load_config
-from exchange_changelog.html import load_html_with_httpx
-from exchange_changelog.html import load_html_with_singlefile
+from exchange_changelog.html import load_html
 from exchange_changelog.slack import post_slack_message
-
-
-def load_html(url: str, method: Literal["httpx", "singlefile"]) -> str:
-    if method == "singlefile":
-        return load_html_with_singlefile(url)
-    elif method == "httpx":
-        return load_html_with_httpx(url)
-    else:
-        raise ValueError(f"unknown method: {method}")
 
 
 def extract_recent_changelog(api_doc: APIDoc, cfg: Config) -> Changelog:

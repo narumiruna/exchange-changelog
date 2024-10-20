@@ -3,6 +3,7 @@ import re
 import subprocess
 import tempfile
 from pathlib import Path
+from typing import Literal
 
 import httpx
 from loguru import logger
@@ -84,3 +85,15 @@ def load_url_with_playwright(url: str) -> str:
 
     text = markdownify(text, strip=["a", "img"])
     return text
+
+
+def load_html(url: str, method: Literal["httpx", "singlefile", "playwright"]) -> str:
+    match method:
+        case "singlefile":
+            return load_html_with_singlefile(url)
+        case "httpx":
+            return load_html_with_httpx(url)
+        case "playwright":
+            return load_url_with_playwright(url)
+        case _:
+            raise ValueError(f"unknown method: {method}")
