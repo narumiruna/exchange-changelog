@@ -80,8 +80,8 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
                 redis.set(key, content_length)
             changelog.changes = new_changes
 
-        # if changelog.changes:
-        #     post_slack_message(changelog.pretty_repr(doc.name, doc.url))
+        if changelog.changes:
+            post_slack_message(changelog.pretty_repr(doc.name, doc.url))
 
 
 if __name__ == "__main__":
