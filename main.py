@@ -48,32 +48,36 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
     cfg = load_config(config_file)
     logger.info("prompt:\n{}", cfg.prompt)
 
-    output_string = ""
+    results: list[tuple[APIDoc, Changelog]] = []
     for doc in cfg.docs:
         changelog = extract_recent_changelog(doc, cfg)
+        results.append((doc, changelog))
 
-        if changelog.changes:
-            if use_redis:
-                # filter out already seen changes
-                new_changes = []
-                for change in changelog.changes:
-                    key = f"changelog:{doc.name}:{change.date}"
-                    if redis.exists(key):
-                        logger.info("already exists: {}", key)
-                        continue
-                    new_changes.append(change)
-                    redis.set(key, "1")
-                changelog.changes = new_changes
-
-            logger.debug("info:\n{}", changelog.pritty_repr(doc.name, doc.url))
-
-            if changelog.changes or changelog.upcoming_changes:
-                post_slack_message(changelog.pritty_repr(doc.name, doc.url))
-
+    # output to file
+    output_string = ""
+    for doc, changelog in results:
         output_string += changelog.pritty_repr(doc.name, doc.url) + "\n\n"
+        logger.debug("changelog:\n{}", changelog.pritty_repr(doc.name, doc.url))
 
-        with output_file.open("w") as f:
-            f.write(output_string)
+    with output_file.open("w") as f:
+        f.write(output_string)
+
+    # post to slack
+    for doc, changelog in results:
+        if use_redis:
+            # filter out already seen changes
+            new_changes = []
+            for change in changelog.changes:
+                key = f"changelog:{doc.name}:{change.date}"
+                if redis.exists(key):
+                    logger.info("already exists: {}", key)
+                    continue
+                new_changes.append(change)
+                redis.set(key, "1")
+            changelog.changes = new_changes
+
+        if changelog.changes or changelog.upcoming_changes:
+            post_slack_message(changelog.pritty_repr(doc.name, doc.url))
 
 
 if __name__ == "__main__":
