@@ -8,6 +8,8 @@ from typing import Literal
 import httpx
 from loguru import logger
 from markdownify import markdownify
+from playwright.sync_api import TimeoutError
+from playwright.sync_api import sync_playwright
 
 from .utils import load_text
 
@@ -74,18 +76,22 @@ def load_html_with_httpx(url: str) -> str:
 
 
 def load_url_with_playwright(url: str) -> str:
-    from playwright.sync_api import sync_playwright
-
     content = ""
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page()
-        page.goto(url, wait_until="networkidle")
+
+        try:
+            page.goto(url, timeout=10_000, wait_until="networkidle")
+        except TimeoutError as e:
+            logger.error("TimeoutError: {}", e)
+            page.goto(url)
+
         content = page.content()
         browser.close()
 
     md_content = markdownify(content, strip=["a", "img"])
-    return md_content
+    return md_content.strip()
 
 
 def load_html(url: str, method: Literal["httpx", "singlefile", "playwright"]) -> str:
