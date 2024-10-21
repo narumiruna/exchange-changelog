@@ -54,13 +54,13 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
         results.append((doc, changelog))
 
     # output to file
-    output_string = ""
+    lines = []
     for doc, changelog in results:
-        output_string += changelog.pretty_repr(doc.name, doc.url) + "\n\n"
+        lines += [changelog.pretty_repr(doc.name, doc.url)]
         logger.debug("changelog:\n{}", changelog.pretty_repr(doc.name, doc.url))
 
     with output_file.open("w") as f:
-        f.write(output_string)
+        f.write("\n\n".join(lines))
 
     # post to slack
     for doc, changelog in results:

@@ -50,13 +50,18 @@ class Change(BaseModel):
     categories: list[Category]
 
     def pretty_repr(self) -> str:
-        s = f"*{self.date}*\n"
-        s += self.markdown_content + "\n"
+        lines = [
+            f"*{self.date}*",
+            self.markdown_content,
+        ]
+
         if self.keywords:
-            s += f"Keywords: {', '.join(self.keywords)}\n"
+            lines += [f"Keywords: {', '.join(self.keywords)}"]
+
         if self.categories:
-            s += f"Categories: {', '.join(self.categories)}\n"
-        return s
+            lines += [f"Categories: {', '.join(self.categories)}"]
+
+        return "\n\n".join(lines)
 
 
 class UpcomingChange(BaseModel):
@@ -64,10 +69,12 @@ class UpcomingChange(BaseModel):
     categories: list[Category]
 
     def pretty_repr(self) -> str:
-        s = self.markdown_content + "\n"
+        lines = [self.markdown_content]
+
         if self.categories:
-            s += f"Categories: {', '.join(self.categories)}\n"
-        return s
+            lines += [f"Categories: {', '.join(self.categories)}"]
+
+        return "\n\n".join(lines)
 
 
 class Changelog(BaseModel):
@@ -75,19 +82,20 @@ class Changelog(BaseModel):
     upcoming_changes: list[UpcomingChange]
 
     def pretty_repr(self, name: str | None, url: str | None = None) -> str:
-        s = ""
+        lines = []
+
         if name and url:
-            s += f"# [{name}]({url})\n"
+            lines += [f"# [{name}]({url})"]
 
         if self.upcoming_changes:
-            s += "*Upcoming Changes*\n"
+            lines += ["*Upcoming Changes*"]
             for upcoming_change in self.upcoming_changes:
-                s += upcoming_change.pretty_repr()
+                lines += [upcoming_change.pretty_repr()]
 
         for changelog in self.changes:
-            s += changelog.pretty_repr()
+            lines += [changelog.pretty_repr()]
 
-        return s
+        return "\n\n".join(lines)
 
     def select_recent_changes(self, num_days: int) -> None:
         recent_changes = []
