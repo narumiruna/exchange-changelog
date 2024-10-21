@@ -21,13 +21,13 @@ docs:
   #   method: httpx
   - name: "Coinbase Exchange"
     url: "https://docs.cdp.coinbase.com/exchange/docs/changelog/"
-    method: singlefile
-  # - name: "Coinbase Upcoming Changes"
-  #   url: "https://docs.cdp.coinbase.com/exchange/docs/upcoming-changes"
-  #   method: singlefile
-  # - name: "MAX Exchange"
-  #   url: "https://docs.google.com/document/d/1iLwjhU-AHSLB4UnZh3cPbkYL-M3-R0jW0MEL6iWt410/edit?tab=t.0#heading=h.z31cougdyqo7"
-  #   method: singlefile
+    method: playwright
+  - name: "Coinbase Upcoming Changes"
+    url: "https://docs.cdp.coinbase.com/exchange/docs/upcoming-changes"
+    method: playwright
+  - name: "MAX Exchange"
+    url: "https://docs.google.com/document/d/1iLwjhU-AHSLB4UnZh3cPbkYL-M3-R0jW0MEL6iWt410/edit?tab=t.0#heading=h.z31cougdyqo7"
+    method: playwright
   # - name: "Bybit Exchange"
   #   url: "https://bybit-exchange.github.io/docs/changelog/v5"
   #   method: httpx
