@@ -68,16 +68,20 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
             # filter out already seen changes
             new_changes = []
             for change in changelog.changes:
+                content_length = len(change.markdown_content)
+
                 key = f"changelog:{doc.name}:{change.date}"
-                if redis.exists(key):
-                    logger.info("already exists: {}", key)
+                if redis.exists(key) and int(redis.get(key)) >= content_length:
+                    logger.info("already seen change: {}", change)
                     continue
+
                 new_changes.append(change)
-                redis.set(key, "1")
+                logger.info("setting key: {} value: {}", key, content_length)
+                redis.set(key, content_length)
             changelog.changes = new_changes
 
-        if changelog.changes:
-            post_slack_message(changelog.pretty_repr(doc.name, doc.url))
+        # if changelog.changes:
+        #     post_slack_message(changelog.pretty_repr(doc.name, doc.url))
 
 
 if __name__ == "__main__":
