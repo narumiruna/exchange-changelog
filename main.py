@@ -56,8 +56,8 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
     # output to file
     output_string = ""
     for doc, changelog in results:
-        output_string += changelog.pritty_repr(doc.name, doc.url) + "\n\n"
-        logger.debug("changelog:\n{}", changelog.pritty_repr(doc.name, doc.url))
+        output_string += changelog.pretty_repr(doc.name, doc.url) + "\n\n"
+        logger.debug("changelog:\n{}", changelog.pretty_repr(doc.name, doc.url))
 
     with output_file.open("w") as f:
         f.write(output_string)
@@ -77,7 +77,7 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
             changelog.changes = new_changes
 
         if changelog.changes:
-            post_slack_message(changelog.pritty_repr(doc.name, doc.url))
+            post_slack_message(changelog.pretty_repr(doc.name, doc.url))
 
 
 if __name__ == "__main__":

@@ -49,7 +49,7 @@ class Change(BaseModel):
     keywords: list[str]
     categories: list[Category]
 
-    def pritty_repr(self) -> str:
+    def pretty_repr(self) -> str:
         s = f"*{self.date}*\n"
         s += self.markdown_content + "\n"
         if self.keywords:
@@ -63,7 +63,7 @@ class UpcomingChange(BaseModel):
     markdown_content: str
     categories: list[Category]
 
-    def pritty_repr(self) -> str:
+    def pretty_repr(self) -> str:
         s = self.markdown_content + "\n"
         if self.categories:
             s += f"Categories: {', '.join(self.categories)}\n"
@@ -74,7 +74,7 @@ class Changelog(BaseModel):
     changes: list[Change]
     upcoming_changes: list[UpcomingChange]
 
-    def pritty_repr(self, name: str | None, url: str | None = None) -> str:
+    def pretty_repr(self, name: str | None, url: str | None = None) -> str:
         s = ""
         if name and url:
             s += f"# [{name}]({url})\n"
@@ -82,10 +82,10 @@ class Changelog(BaseModel):
         if self.upcoming_changes:
             s += "*Upcoming Changes*\n"
             for upcoming_change in self.upcoming_changes:
-                s += upcoming_change.pritty_repr()
+                s += upcoming_change.pretty_repr()
 
         for changelog in self.changes:
-            s += changelog.pritty_repr()
+            s += changelog.pretty_repr()
 
         return s
 
