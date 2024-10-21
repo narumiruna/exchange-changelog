@@ -23,7 +23,7 @@ def extract_recent_changelog(api_doc: APIDoc, cfg: Config) -> Changelog:
     text = text[: cfg.trim_len]
 
     try:
-        changelog = extract_changelog(text)
+        changelog = extract_changelog(text, prompt=cfg.prompt)
     except Exception as e:
         logger.error("unable to extract changelog: {}", e)
         return Changelog(changes=[], upcoming_changes=[])
@@ -46,6 +46,7 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
 
     logger.info("loading config file: {}", config_file)
     cfg = load_config(config_file)
+    logger.info("prompt:\n{}", cfg.prompt)
 
     output_string = ""
     for doc in cfg.docs:

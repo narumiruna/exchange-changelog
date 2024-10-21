@@ -104,17 +104,19 @@ class Changelog(BaseModel):
         self.changes = recent_changes
 
 
-def extract_changelog(text: str) -> Changelog:
+def extract_changelog(text: str, prompt: str | None = None) -> Changelog:
     # https://platform.openai.com/docs/guides/structured-outputs
+    prompt = prompt or SYSTEM_PROMPT
+
     return parse_completion(
         messages=[
             {
                 "role": "system",
-                "content": SYSTEM_PROMPT,
+                "content": prompt.strip(),
             },
             {
                 "role": "user",
-                "content": text,
+                "content": f'Input:\n"""\n{text}\n"""\n',
             },
         ],
         response_format=Changelog,
