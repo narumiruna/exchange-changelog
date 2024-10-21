@@ -66,7 +66,9 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
                 changelog.changes = new_changes
 
             logger.debug("info:\n{}", changelog.pritty_repr(doc.name, doc.url))
-            post_slack_message(changelog.pritty_repr(doc.name, doc.url))
+
+            if changelog.changes or changelog.upcoming_changes:
+                post_slack_message(changelog.pritty_repr(doc.name, doc.url))
 
         output_string += changelog.pritty_repr(doc.name, doc.url) + "\n\n"
 
