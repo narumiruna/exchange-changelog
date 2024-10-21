@@ -10,17 +10,16 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
-      - name: Create dotenv
-        run: |
-          echo OPENAI_MODEL=${{ secrets.OPENAI_MODEL }} >> .env
-          echo OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} >> .env
-          echo SINGLEFILE_PATH=${{ secrets.SINGLEFILE_PATH }} >> .env
-          echo SLACK_TOKEN=${{ secrets.SLACK_TOKEN }} >> .env
-          echo SLACK_CHANNEL=${{ vars.SLACK_CHANNEL }} >> .env
       - name: Run
         run: |
           poetry install
           poetry run python main.py -c config/default.yaml -o changelog.md --use-redis
+        env:
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SINGLEFILE_PATH: ${{ secrets.SINGLEFILE_PATH }}
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNEL: ${{ vars.SLACK_CHANNEL }}
       - uses: danielmcconville/gist-sync-file-action@v2.0.0
         with:
           gistPat: ${{ secrets.GIST_TOKEN }}
