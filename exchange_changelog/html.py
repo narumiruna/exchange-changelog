@@ -76,15 +76,16 @@ def load_html_with_httpx(url: str) -> str:
 def load_url_with_playwright(url: str) -> str:
     from playwright.sync_api import sync_playwright
 
+    content = ""
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page()
         page.goto(url, wait_until="networkidle")
-        text = page.content()
+        content = page.content()
         browser.close()
 
-    text = markdownify(text, strip=["a", "img"])
-    return text
+    md_content = markdownify(content, strip=["a", "img"])
+    return md_content
 
 
 def load_html(url: str, method: Literal["httpx", "singlefile", "playwright"]) -> str:
