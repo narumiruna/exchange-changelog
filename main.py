@@ -76,7 +76,7 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
                 redis.set(key, "1")
             changelog.changes = new_changes
 
-        if changelog.changes or changelog.upcoming_changes:
+        if changelog.changes:
             post_slack_message(changelog.pritty_repr(doc.name, doc.url))
 
 
