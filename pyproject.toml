@@ -20,7 +20,7 @@ pyyaml = "^6.0.2"
 slack-sdk = "^3.33.1"
 gradio = "^5.1.0"
 redis = "^5.1.1"
-playwright = "^1.47.0"
+playwright = "^1.48.0"
 
 
 [tool.poetry.group.dev.dependencies]
