@@ -16,6 +16,7 @@ jobs:
       - name: Run
         run: |
           poetry install
+          poetry run playwright install
           poetry run python main.py -c config/default.yaml -o changelog.md --use-redis
         env:
           OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
