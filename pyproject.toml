@@ -18,7 +18,7 @@ google-generativeai = "^0.8.3"
 markdownify = "^0.13.1"
 pyyaml = "^6.0.2"
 slack-sdk = "^3.33.1"
-gradio = "^5.1.0"
+gradio = "^5.3.0"
 redis = "^5.1.1"
 playwright = "^1.48.0"
 
