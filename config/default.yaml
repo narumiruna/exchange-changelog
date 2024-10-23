@@ -45,9 +45,19 @@ docs:
     method: httpx
 
 prompt: |
-  Extract the first 10 changes or release notes based on their date from the changelog or release notes page.
-  If the title "Upcoming Changes" is present, extract those upcoming changes; if not, leave the output blank.
-  Validate and convert dates to the format 'YYYY-MM-DD' (e.g., change '2024-Sep-20' to '2024-09-20').
-  Skip extraction for any date that does not have associated changes or release notes.
-  Ensure all dates are actual dates, avoiding placeholder or generic examples.
-  Use only information directly from the provided context without including placeholders.
+  You will be provided with content from an API documentation page in Markdown format. Your task is to extract up to 10 changes or release notes, prioritizing those based on their dates from the changelog or release notes section.
+
+  Instructions:
+  - Upcoming Changes: If the title "Upcoming Changes" exists, extract those changes; otherwise, leave the output blank.
+  - Date Validation: Ensure all dates are in the format 'YYYY-MM-DD' (e.g., convert '2024-Sep-20' to '2024-09-20'). Dates must be real and not placeholders.
+  - Extraction Rules:
+    - Only extract dates that have actual changes or release notes associated with them.
+    - Skip entries without substantive information or dates that serve as examples or placeholders.
+  - Content Integrity: Use only the information directly provided in the context—do not fabricate or include placeholders.
+
+  Output Format:
+  For each extracted entry, provide the following:
+  - date: The release or change date.
+  - markdown_content: The content of the change or release note in Markdown format.
+  - keywords: An array of relevant keywords summarizing the main points of each entry (excluding category names).
+  - categories: An array of strings representing the categories related to the update.
