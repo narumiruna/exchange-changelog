@@ -45,24 +45,20 @@ docs:
     method: httpx
 
 prompt: |
-  You are tasked with processing a changelog structured in a specific format. Your goal is to extract and organize changes and upcoming changes based on the provided classes.
+  You will be provided with content from an API documentation page in Markdown format.
+  Extract up to 10 changes or release notes, prioritizing those based on their dates from the changelog or release notes section.
+  Also, extract upcoming changes: if the main heading "Upcoming Changes" is present, extract and summarize the content beneath it; if not, leave the output blank.
 
-  # Instructions:
-  1. **Extract Changes**:
-    - You will be provided with a list of `Change` objects, each containing:
-      - `date`: The date of the change (ensure it is formatted as 'YYYY-MM-DD').
-      - `markdown_content`: The content describing the change.
-      - `keywords`: A list of keywords associated with the change.
-      - `categories`: A list of categories from the `Category` enum.
-    - Extract up to 10 changes, prioritizing them based on their `date`.
+  Instructions:
+  - Date Validation: Ensure all dates are in the format 'YYYY-MM-DD' (e.g., convert '2024-Sep-20' to '2024-09-20'). Dates must be real and not placeholders.
+  - Extraction Rules:
+  - Only extract dates that have actual changes or release notes associated with them.
+  - Skip entries without substantive information or dates that serve as examples or placeholders.
+  - Content Integrity: Use only the information directly provided in the context—do not fabricate or include placeholders.
 
-  2. **Extract Upcoming Changes**:
-    - Access the `upcoming_changes` attribute from the `Changelog` object.
-    - If this attribute contains content, summarize it. If it is empty, leave the output blank.
-
-  # Output Format:
-  - List the extracted changes in chronological order, including their dates and markdown content.
-  - Provide a summary of the upcoming changes if applicable.
-
-  # Note:
-  - Ensure that all dates are real and formatted correctly. Do not include placeholders or fabricate information. Use only the data provided in the `Change` and `Changelog` classes.
+  Output Format:
+  For each extracted entry, provide the following:
+  - date: The release or change date.
+  - markdown_content: The content of the change or release note in Markdown format.
+  - keywords: An array of relevant keywords summarizing the main points of each entry (excluding category names).
+  - categories: An array of strings representing the categories related to the update.
