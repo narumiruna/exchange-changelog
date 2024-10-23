@@ -59,22 +59,9 @@ class Change(BaseModel):
         return "\n\n".join(lines)
 
 
-class UpcomingChange(BaseModel):
-    markdown_content: str
-    categories: list[Category]
-
-    def pretty_repr(self) -> str:
-        lines = [self.markdown_content]
-
-        if self.categories:
-            lines += [f"Categories: {', '.join(self.categories)}"]
-
-        return "\n\n".join(lines)
-
-
 class Changelog(BaseModel):
     changes: list[Change]
-    upcoming_changes: list[UpcomingChange]
+    upcoming_changes: str
 
     def pretty_repr(self, name: str | None, url: str | None = None) -> str:
         lines = []
@@ -84,8 +71,7 @@ class Changelog(BaseModel):
 
         if self.upcoming_changes:
             lines += ["*Upcoming Changes*"]
-            for upcoming_change in self.upcoming_changes:
-                lines += [upcoming_change.pretty_repr()]
+            lines += [self.upcoming_changes]
 
         for changelog in self.changes:
             lines += [changelog.pretty_repr()]
