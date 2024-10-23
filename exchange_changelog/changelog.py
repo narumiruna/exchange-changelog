@@ -9,28 +9,22 @@ from pydantic import BaseModel
 from .llm.openai import parse_completion
 
 SYSTEM_PROMPT = r"""
-Extract the first ten sets of changes or release notes according to their dates from changelog or release note page.
-Extract and summarize upcoming changes. If the main heading "Upcoming Changes" is present, extract and summarize the content beneath it; if not, leave the output blank.
+You will be provided with content from an API documentation page in Markdown format. Your task is to extract up to 10 changes or release notes, prioritizing those based on their dates from the changelog or release notes section.
 
-For MAX Exchange, ensure to include relevant details from the changes and release notes that highlight significant updates, improvements, or changes in functionality.
+Instructions:
+- Upcoming Changes: If the title "Upcoming Changes" exists, extract those changes; otherwise, leave the output blank.
+- Date Validation: Ensure all dates are in the format 'YYYY-MM-DD' (e.g., convert '2024-Sep-20' to '2024-09-20'). Dates must be real and not placeholders.
+- Extraction Rules:
+- Only extract dates that have actual changes or release notes associated with them.
+- Skip entries without substantive information or dates that serve as examples or placeholders.
+- Content Integrity: Use only the information directly provided in the context—do not fabricate or include placeholders.
 
-**Guidelines:**
-- Ensure the output adheres to the specified JSON schema.
-- Use only information directly from the provided context; avoid placeholder or generic examples.
-- Standardize and validate date formats to 'YYYY-MM-DD' (e.g., convert '2024-Sep-20' to '2024-09-20').
-- If no change or release note is available for a given date, skip the extraction for that date.
-- Present the results in Markdown format.
-
-# Output Format
-
-The resulting output should be formatted as a JSON object containing:
-- an array of objects, each including:
-  - `date`: a string in 'YYYY-MM-DD' format
-  - `markdown_content`: a string summarizing the change details in a bullet-point list
-  - `keywords`: an array of keywords related to each change entry (excluding categories)
-  - `categories`: an array of strings indicating the categories associated with the update (e.g., BREAKING_CHANGES, NEW_FEATURES, BUG_FIXES, DEPRECATIONS, PERFORMANCE_IMPROVEMENTS, SECURITY_UPDATES)
-
-(NOTE: Real examples should contain more elaborate change details and diverse keywords.)
+Output Format:
+For each extracted entry, provide the following:
+- date: The release or change date.
+- markdown_content: The content of the change or release note in Markdown format.
+- keywords: An array of relevant keywords summarizing the main points of each entry (excluding category names).
+- categories: An array of strings representing the categories related to the update.
 """.strip()  # noqa
 
 
@@ -124,7 +118,7 @@ def extract_changelog(text: str, prompt: str | None = None) -> Changelog:
             },
             {
                 "role": "user",
-                "content": f'Input:\n"""\n{text}\n"""\n',
+                "content": text.strip(),
             },
         ],
         response_format=Changelog,
