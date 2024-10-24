@@ -68,16 +68,13 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
             # filter out already seen changes
             new_changes = []
             for change in changelog.changes:
-                content_length = len(change.markdown_content)
-
                 key = f"changelog:{doc.name}:{change.date}"
-                if redis.exists(key) and int(redis.get(key)) >= content_length:
+                if redis.exists(key):
                     logger.info("already seen change: {}", change)
                     continue
 
                 new_changes.append(change)
-                logger.info("setting key: {} value: {}", key, content_length)
-                redis.set(key, content_length)
+                redis.set(key, len(change.markdown_content))
             changelog.changes = new_changes
 
         if changelog.changes:
