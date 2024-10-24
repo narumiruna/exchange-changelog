@@ -12,7 +12,7 @@ RUN npm install -g single-file-cli
 
 WORKDIR /app
 
-COPY exchange_changelog exchange_changelog
+COPY src src
 COPY main.py .
 COPY pyproject.toml .
 COPY uv.lock .
