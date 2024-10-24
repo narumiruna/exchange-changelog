@@ -59,6 +59,7 @@ prompt: |
   Output Format:
   For each extracted entry, provide the following:
   - date: The release or change date.
-  - markdown_content: The content of the change or release note in Markdown format.
+  - markdown_content: The content of the change or release note in bullet-point Markdown format.
   - keywords: An array of relevant keywords summarizing the main points of each entry (excluding category names).
   - categories: An array of strings representing the categories related to the update.
+  - upcoming_changes: A summary of the "Upcoming Changes" section, if present. Otherwise, this field should be left blank.
