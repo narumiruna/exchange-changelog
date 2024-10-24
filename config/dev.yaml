@@ -19,6 +19,12 @@ docs:
   - name: "Binance Derivatives Trading"
     url: "https://developers.binance.com/docs/derivatives/change-log"
     method: httpx
+  - name: "Bitfinex"
+    url: "https://docs.bitfinex.com/docs/changelog"
+    method: httpx
+  - name: "Kraken"
+    url: "https://docs.kraken.com/api/docs/change-log"
+    method: httpx
   - name: "Coinbase Exchange"
     url: "https://docs.cdp.coinbase.com/exchange/docs/changelog/"
     method: singlefile
