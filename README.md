@@ -6,21 +6,18 @@
 
 Follow the [Singlefile CLI Installation Guide](https://github.com/gildas-lormeau/single-file-cli?tab=readme-ov-file#installation).
 
-### Install Poetry
-
-To install Poetry, first install `pipx` and then use `pipx` to install Poetry:
+### Install uv
 
 ```sh
-pip install pipx
-pipx install poetry
+pip install uv
 ```
 
 ### Install Python Dependencies
 
-Install the required Python dependencies using Poetry:
+Install the required Python dependencies using uv:
 
 ```sh
-poetry install
+uv sync
 ```
 
 ### Environment Configuration
@@ -39,10 +36,10 @@ SLACK_CHANNEL=your_slack_channel_here
 
 ## Usage
 
-Run the main script using Poetry:
+Run the main script using uv:
 
 ```sh
-poetry run python main.py
+uv run python main.py
 ```
 
 Result: [gist](https://gist.github.com/narumiruna/707786b350fc17197a35ee9ae3d0456d)
@@ -52,7 +49,7 @@ Result: [gist](https://gist.github.com/narumiruna/707786b350fc17197a35ee9ae3d045
 To generate prompts, run the following script:
 
 ```sh
-poetry run python meta_prompt.py
+uv run python meta_prompt.py
 ```
 
 For more details, refer to the [OpenAI Prompt Generation Guide](https://platform.openai.com/docs/guides/prompt-generation).
