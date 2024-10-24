@@ -20,7 +20,7 @@ def remove_base64_image(markdown_text: str) -> str:
     return cleaned_text
 
 
-def save_html_with_singlefile(url: str, cookies_file: str | None = None) -> str:
+def save_html_with_singlefile(url: str, cookies_file: str | None = None, timeout: int = 10_000) -> str:
     logger.info("Downloading HTML by SingleFile: {}", url)
 
     filename = tempfile.mktemp(suffix=".html")
@@ -39,6 +39,8 @@ def save_html_with_singlefile(url: str, cookies_file: str | None = None) -> str:
         ]
 
     cmds += [
+        "--browser-load-max-time",
+        str(timeout),
         "--filename-conflict-action",
         "overwrite",
         url,
