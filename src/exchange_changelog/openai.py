@@ -1,12 +1,12 @@
 import functools
 import os
+from collections.abc import Iterable
 from typing import Literal
 from typing import TypedDict
 
 from loguru import logger
 from openai import OpenAI
-
-MAX_CONTENT_LENGTH = 1_048_576
+from openai.types.chat import ChatCompletionMessageParam
 
 
 class Message(TypedDict):
@@ -28,13 +28,10 @@ def get_openai_model() -> str:
     return model
 
 
-def create_completion(messages: list[Message]) -> str:
+def create_completion(messages: Iterable[ChatCompletionMessageParam]) -> str:
     client: OpenAI = get_openai_client()
     model = get_openai_model()
     temperature = float(os.getenv("OPENAI_TEMPERATURE", 0))
-
-    for message in messages:
-        message["content"] = message["content"][:MAX_CONTENT_LENGTH]
 
     completion = client.chat.completions.create(
         model=model,
@@ -51,13 +48,10 @@ def create_completion(messages: list[Message]) -> str:
     return content
 
 
-def parse_completion(messages: list[Message], response_format):
+def parse_completion(messages: Iterable[ChatCompletionMessageParam], response_format):
     client: OpenAI = get_openai_client()
     model = get_openai_model()
     temperature = float(os.getenv("OPENAI_TEMPERATURE", 0))
-
-    for message in messages:
-        message["content"] = message["content"][:MAX_CONTENT_LENGTH]
 
     completion = client.beta.chat.completions.parse(
         model=model,
