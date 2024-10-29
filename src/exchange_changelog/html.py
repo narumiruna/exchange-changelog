@@ -1,5 +1,4 @@
 import os
-import re
 import subprocess
 import tempfile
 from pathlib import Path
@@ -12,12 +11,6 @@ from playwright.sync_api import TimeoutError
 from playwright.sync_api import sync_playwright
 
 from .utils import load_text
-
-
-def remove_base64_image(markdown_text: str) -> str:
-    pattern = r"!\[.*?\]\(data:image\/.*?;base64,.*?\)"
-    cleaned_text = re.sub(pattern, "", markdown_text)
-    return cleaned_text
 
 
 def save_html_with_singlefile(url: str, cookies_file: str | None = None, timeout: int = 10_000) -> str:
@@ -56,7 +49,6 @@ def load_html_with_singlefile(url: str) -> str:
     f = save_html_with_singlefile(url)
 
     text = markdownify(load_text(f), strip=["a", "img"])
-    text = remove_base64_image(text)
     return text
 
 
@@ -72,8 +64,6 @@ def load_html_with_httpx(url: str) -> str:
     resp.raise_for_status()
 
     text = markdownify(resp.text, strip=["a", "img"])
-    text = remove_base64_image(text)
-
     return text
 
 
