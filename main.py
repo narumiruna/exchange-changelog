@@ -26,7 +26,7 @@ def extract_recent_changelog(api_doc: APIDoc, cfg: Config) -> Changelog:
         changelog = extract_changelog(text, prompt=cfg.prompt)
     except Exception as e:
         logger.error("unable to extract changelog: {}", e)
-        return Changelog(changes=[], upcoming_changes=[])
+        return Changelog(changes=[], upcoming_changes="")
 
     # log parsed changes
     for change in changelog.changes:

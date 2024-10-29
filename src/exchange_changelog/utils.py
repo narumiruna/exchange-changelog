@@ -15,4 +15,4 @@ def load_text(f: str | Path) -> str:
 
 def save_text(text: str, f: str | Path) -> None:
     with open(f, "w") as fp:
-        return fp.write(text)
+        fp.write(text)
