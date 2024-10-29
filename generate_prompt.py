@@ -3,7 +3,7 @@ from dotenv import find_dotenv
 from dotenv import load_dotenv
 from loguru import logger
 
-from exchange_changelog.llm import create_completion
+from exchange_changelog.openai import create_completion
 from exchange_changelog.utils import save_text
 
 META_PROMPT = """

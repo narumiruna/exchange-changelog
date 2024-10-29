@@ -6,7 +6,7 @@ from enum import Enum
 from loguru import logger
 from pydantic import BaseModel
 
-from .llm.openai import parse_completion
+from .openai import parse_completion
 
 SYSTEM_PROMPT = r"""
 You will be provided with content from an API documentation page in Markdown format.
