@@ -56,8 +56,8 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
     # output to file
     lines = []
     for doc, changelog in results:
-        lines += [changelog.pretty_repr(doc.name, doc.url)]
-        logger.debug("changelog:\n{}", changelog.pretty_repr(doc.name, doc.url))
+        lines += [changelog.to_markdown(doc.name, doc.url)]
+        logger.debug("changelog:\n{}", changelog.to_markdown(doc.name, doc.url))
 
     with output_file.open("w") as f:
         f.write("\n\n".join(lines))
@@ -78,7 +78,7 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
             changelog.changes = new_changes
 
         if changelog.changes:
-            post_slack_message(changelog.pretty_repr(doc.name, doc.url))
+            post_slack_message(changelog.to_slack_format(doc.name, doc.url))
 
 
 if __name__ == "__main__":
