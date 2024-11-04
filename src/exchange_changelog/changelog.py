@@ -58,12 +58,26 @@ class Change(BaseModel):
 
         return "\n\n".join(lines)
 
+    def pretty_slack(self) -> str:
+        lines = [
+            f"*<{self.date}>*",
+            self.markdown_content,
+        ]
+
+        if self.keywords:
+            lines += [f"*Keywords:* {', '.join(self.keywords)}"]
+
+        if self.categories:
+            lines += [f"*Categories:* {', '.join(self.categories)}"]
+
+        return "\n\n".join(lines)
+
 
 class Changelog(BaseModel):
     changes: list[Change]
     upcoming_changes: str
 
-    def pretty_repr(self, name: str | None, url: str | None = None) -> str:
+    def to_markdown(self, name: str | None, url: str | None = None) -> str:
         lines = []
 
         if name and url:
@@ -75,6 +89,21 @@ class Changelog(BaseModel):
 
         for changelog in self.changes:
             lines += [changelog.pretty_repr()]
+
+        return "\n\n".join(lines)
+
+    def to_slack_format(self, name: str | None, url: str | None = None) -> str:
+        lines = []
+
+        if name and url:
+            lines += [f"*<{url}|{name}>*"]
+
+        if self.upcoming_changes:
+            lines += ["*Upcoming Changes*"]
+            lines += [self.upcoming_changes]
+
+        for changelog in self.changes:
+            lines += [changelog.pretty_slack()]
 
         return "\n\n".join(lines)
 
