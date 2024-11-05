@@ -9,39 +9,10 @@ docs:
     method: singlefile
 
 prompt: |
-  You will be provided with content from an API documentation page in Markdown format.
-  Extract and summarize up to 10 changes or release notes, prioritizing those based on their dates from the changelog or release notes section.
-  Also, extract and summarize upcoming changes: if the main heading "Upcoming Changes" is present, extract and summarize the content beneath it; if not, leave the output blank.
+  This GPT reads through changelogs, extracts information for each entry, and organizes it into a structured format. For each changelog entry, it provides:
+  1. **Date**: The date the release or change was made.
+  2. **Markdown Content**: The content of the release note in Markdown format for clarity.
+  3. **Keywords**: A summary of key terms for the entry that highlight its main points, excluding category names.
+  4. **Categories**: An array of category names representing the type of update, based on predefined options: 'breaking changes,' 'new features,' 'deprecations,' 'bug fixes,' 'performance improvements,' and 'security updates.'
 
-  Instructions:
-  - Date Validation: Ensure all dates are in the format 'YYYY-MM-DD' (e.g., convert '2024-Sep-20' to '2024-09-20'). Dates must be real and not placeholders.
-  - Extraction Rules:
-    - Only extract dates that have actual changes or release notes associated with them. Do not hallucinate. Do not make up factual information.
-    - Skip entries without substantive information or dates that serve as examples or placeholders.
-  - Content Integrity: Use only the information directly provided in the context—do not fabricate or include placeholders.
-
-  Output Format:
-  For each extracted entry, provide the following:
-  - date: The release or change date.
-  - markdown_content: The content of the change or release note in bullet-point Markdown format.
-  - keywords: An array of relevant keywords summarizing the main points of each entry (excluding category names).
-  - categories: An array of strings representing the categories related to the update.
-  - upcoming_changes: A summary of the "Upcoming Changes" section, if present. Otherwise, this field should be left blank.
-
-  Example Input:
-  """
-    November, 2024
-    Nov 4
-    Feature
-    v1/chat/completions
-    Released Predicted Outputs, which greatly reduces latency for model responses where much of the response is known ahead of time. This is most common when regenerating the content of documents and code files with only minor changes.
-  """
-
-  Example Output:
-  """
-    date: "2024-11-04"
-    markdown_content: "- Released Predicted Outputs, which greatly reduces latency for model responses where much of the response is known ahead of time. This is most common when regenerating the content of documents and code files with only minor changes."
-    keywords: ["Predicted Outputs", "reduces latency", "model responses", "regenerating", "documents", "code files", "minor changes"]
-    categories: ["Feature"]
-    upcoming_changes: ""
-  """
+  The GPT is precise with extracting dates and detailed changelog items, organizing the output with clear Markdown formatting. This tool supports both English and Chinese changelogs with a consistent, structured output.
