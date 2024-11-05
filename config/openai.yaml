@@ -27,3 +27,21 @@ prompt: |
   - keywords: An array of relevant keywords summarizing the main points of each entry (excluding category names).
   - categories: An array of strings representing the categories related to the update.
   - upcoming_changes: A summary of the "Upcoming Changes" section, if present. Otherwise, this field should be left blank.
+
+  Example Input:
+  """
+    November, 2024
+    Nov 4
+    Feature
+    v1/chat/completions
+    Released Predicted Outputs, which greatly reduces latency for model responses where much of the response is known ahead of time. This is most common when regenerating the content of documents and code files with only minor changes.
+  """
+
+  Example Output:
+  """
+    date: "2024-11-04"
+    markdown_content: "- Released Predicted Outputs, which greatly reduces latency for model responses where much of the response is known ahead of time. This is most common when regenerating the content of documents and code files with only minor changes."
+    keywords: ["Predicted Outputs", "reduces latency", "model responses", "regenerating", "documents", "code files", "minor changes"]
+    categories: ["Feature"]
+    upcoming_changes: ""
+  """
