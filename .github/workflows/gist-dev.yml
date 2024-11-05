@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       config_file:
-        description: "Config file"
+        description: "The configuration file to use"
         required: true
         default: "config/dev.yaml"
 
