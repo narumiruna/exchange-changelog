@@ -16,8 +16,8 @@ prompt: |
   Instructions:
   - Date Validation: Ensure all dates are in the format 'YYYY-MM-DD' (e.g., convert '2024-Sep-20' to '2024-09-20'). Dates must be real and not placeholders.
   - Extraction Rules:
-  - Only extract dates that have actual changes or release notes associated with them. Do not hallucinate. Do not make up factual information.
-  - Skip entries without substantive information or dates that serve as examples or placeholders.
+    - Only extract dates that have actual changes or release notes associated with them. Do not hallucinate. Do not make up factual information.
+    - Skip entries without substantive information or dates that serve as examples or placeholders.
   - Content Integrity: Use only the information directly provided in the context—do not fabricate or include placeholders.
 
   Output Format:
