@@ -3,10 +3,14 @@ import os
 from collections.abc import Iterable
 from typing import Literal
 from typing import TypedDict
+from typing import TypeVar
 
 from loguru import logger
 from openai import OpenAI
 from openai.types.chat import ChatCompletionMessageParam
+from pydantic import BaseModel
+
+T = TypeVar("T", bound=BaseModel)
 
 
 class Message(TypedDict):
@@ -48,7 +52,7 @@ def create_completion(messages: Iterable[ChatCompletionMessageParam]) -> str:
     return content
 
 
-def parse_completion(messages: Iterable[ChatCompletionMessageParam], response_format):
+def parse_completion(messages: Iterable[ChatCompletionMessageParam], response_format: type[T]) -> T:
     client: OpenAI = get_openai_client()
     model = get_openai_model()
     temperature = float(os.getenv("OPENAI_TEMPERATURE", 0))
