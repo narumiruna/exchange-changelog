@@ -1,12 +1,15 @@
-name: Cron Dev
+name: Gist Dev
 
 on:
   workflow_dispatch:
-  # schedule:
-  #   - cron: "0 0 */7 * *"
+    inputs:
+      config_file:
+        description: "Config file"
+        required: true
+        default: "config/dev.yaml"
 
 jobs:
-  cron:
+  gist-dev:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
@@ -14,7 +17,7 @@ jobs:
         run: |
           uv sync
           uv run playwright install
-          uv run python main.py -c config/dev.yaml -o changelog.md
+          uv run python main.py -c ${{ inputs.config_file }} -o changelog.md
         env:
           OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
