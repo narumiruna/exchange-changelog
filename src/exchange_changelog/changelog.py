@@ -3,9 +3,10 @@ from datetime import datetime
 from datetime import timedelta
 from enum import Enum
 
-from lazyopenai import generate
 from loguru import logger
 from pydantic import BaseModel
+
+from .openai import parse_completion
 
 SYSTEM_PROMPT = r"""
 You will be provided with content from an API documentation page in Markdown format.
@@ -125,12 +126,16 @@ def extract_changelog(text: str, prompt: str | None = None) -> Changelog:
     # https://platform.openai.com/docs/guides/structured-outputs
     prompt = prompt or SYSTEM_PROMPT
 
-    res = generate(
-        user=text.strip(),
-        system=prompt.strip(),
+    return parse_completion(
+        messages=[
+            {
+                "role": "system",
+                "content": prompt.strip(),
+            },
+            {
+                "role": "user",
+                "content": text.strip(),
+            },
+        ],
         response_format=Changelog,
     )
-    if not isinstance(res, Changelog):
-        raise ValueError(f"unexpected response type: {type(res)}")
-
-    return res
