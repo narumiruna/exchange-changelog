@@ -35,6 +35,7 @@ dev-dependencies = [
     "types-pyopenssl>=24.1.0.20240722",
     "types-requests>=2.32.0.20241016",
     "jupyter>=1.1.1",
+    "feedparser>=6.0.11",
 ]
 
 [tool.ruff]
