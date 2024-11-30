@@ -79,7 +79,7 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
             changelog.changes = new_changes
 
         if changelog.changes:
-            post_slack_message(changelog.to_slack_format(doc.name, doc.url))
+            post_slack_message(changelog.to_slack(doc.name, doc.url))
 
 
 if __name__ == "__main__":

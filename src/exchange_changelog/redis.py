@@ -1,6 +1,5 @@
 import functools
 import os
-from collections.abc import Awaitable
 from typing import Any
 
 import redis
@@ -9,8 +8,8 @@ import redis
 @functools.cache
 def get_redis_client() -> redis.Redis:
     host = os.getenv("REDIS_HOST", "localhost")
-    port = os.getenv("REDIS_PORT", 6379)
-    db = os.getenv("REDIS_DB", 0)
+    port = int(os.getenv("REDIS_PORT", 6379))
+    db = int(os.getenv("REDIS_DB", 0))
     return redis.Redis(
         host=host,
         port=port,
@@ -20,13 +19,13 @@ def get_redis_client() -> redis.Redis:
     )
 
 
-def exists(key: str) -> Awaitable[Any] | int:
+def exists(key: str) -> int:
     return get_redis_client().exists(key)
 
 
-def set(key: str, value: str | int) -> Awaitable[Any] | bool:
+def set(key: str, value: str | int) -> bool | None:
     return get_redis_client().set(key, value)
 
 
-def get(key: str) -> Awaitable[Any] | str:
+def get(key: str) -> Any | None:
     return get_redis_client().get(key)
