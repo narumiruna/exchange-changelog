@@ -22,11 +22,7 @@ def extract_recent_changelog(api_doc: APIDoc, cfg: Config) -> Changelog:
     # trim text
     text = text[: cfg.trim_len]
 
-    try:
-        changelog = extract_changelog(text, prompt=cfg.prompt)
-    except Exception as e:
-        logger.error("unable to extract changelog: {}", e)
-        return Changelog(changes=[], upcoming_changes="")
+    changelog = extract_changelog(text, prompt=cfg.prompt)
 
     # log parsed changes
     for change in changelog.changes:
@@ -50,7 +46,12 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
 
     results: list[tuple[APIDoc, Changelog]] = []
     for doc in cfg.docs:
-        changelog = extract_recent_changelog(doc, cfg)
+        try:
+            changelog = extract_recent_changelog(doc, cfg)
+        except Exception as e:
+            logger.error("unable to extract changelog: {}", e)
+            post_slack_message(f"unable to extract changelog for {doc.name}, got error: {e}")
+            changelog = Changelog(changes=[], upcoming_changes="")
         results.append((doc, changelog))
 
     # output to file
