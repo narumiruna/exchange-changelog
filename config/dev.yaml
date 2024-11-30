@@ -52,7 +52,7 @@ docs:
 
 prompt: |
   You will be provided with content from an API documentation page in Markdown format.
-  Extract and summarize up to 10 changes or release notes, prioritizing those based on their dates from the changelog or release notes section.
+  Extract and summarize up to 10 change groups or release notes, prioritizing those based on their dates from the changelog or release notes section.
   Also, extract and summarize upcoming changes: if the main heading "Upcoming Changes" is present, extract and summarize the content beneath it; if not, leave the output blank.
 
   Instructions:
