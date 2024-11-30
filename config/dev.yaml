@@ -51,13 +51,26 @@ docs:
     method: httpx
 
 prompt: |
-  You will be provided with content from an API documentation page in Markdown format.
-  Extract and summarize up to 10 change groups or release notes, prioritizing those based on their dates from the changelog or release notes section.
-  Also, extract and summarize upcoming changes: if the main heading "Upcoming Changes" is present, extract and summarize the content beneath it; if not, leave the output blank.
+  Generate a structured changelog for a project using the provided information only.
 
-  Instructions:
-  - Date Validation: Ensure all dates are in the format 'YYYY-MM-DD' (e.g., convert '2024-Sep-20' to '2024-09-20'). Dates must be real and not placeholders.
-  - Extraction Rules:
-  - Only extract dates that have actual changes or release notes associated with them.
-  - Skip entries without substantive information or dates that serve as examples or placeholders.
-  - Content Integrity: Use only the information directly provided in the context—do not fabricate or include placeholders.
+  Follow the steps below to ensure the Changelog contains well-organized information, using appropriate categories and detailed descriptions for each change. Use only the information provided directly—do not add, fabricate, or use any assumed details or placeholders not explicitly included in the given context.
+
+  # Steps
+
+  1. **Identify Change Groups**:
+    - Divide the changes into groups by relevant dates. Each group should include changes that are logically connected and share a common release date.
+    - Ensure that there are no more than 10 change groups, listed in descending order of priority by their dates.
+    - Do not generate a change group if that date has no significant changes reported.
+
+  2. **Classify Each Change**:
+    - For each change, categorize it into an appropriate category:
+      - Choose from "breaking changes", "new features", "deprecations", "bug fixes", "performance improvements", or "security updates".
+    - Write a **detailed description** for each change using only the provided information, which precisely explains what was done and why it was necessary. Do not fabricate or infer any details.
+
+  3. **Summarize Change Groups**:
+    - Write a high-level summary of the changes in each group.
+    - Identify key topics, important features, or major issues fixed in the group, and summarize the overall intent or benefit using the provided information only.
+    - Include **keywords** summarizing the main elements of each change for easy reference.
+
+  4. **Specify Upcoming Changes**:
+    - If there are any upcoming changes planned in the provided context, include those details. If no information is provided, leave this field blank.

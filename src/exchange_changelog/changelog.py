@@ -56,11 +56,15 @@ class Change(BaseModel):
 
 class ChangeGroup(BaseModel):
     date: str = Field(..., description="Date of the change group in YYYY-MM-DD format.")
+    summary: str = Field(None, description="Summary of the changes in this group.")
     changes: list[Change] = Field(..., description="List of changes in this group.")
     keywords: list[str] = Field(..., description="Keywords summarizing the main points of each entry.")
 
     def pretty_repr(self) -> str:
         lines = [f"## {self.date}"]
+
+        if self.summary:
+            lines += [f"📑 {self.summary}"]
 
         for change in self.changes:
             emoji = change.category.get_emoji()
@@ -72,7 +76,10 @@ class ChangeGroup(BaseModel):
         return "\n".join(lines)
 
     def pretty_slack(self) -> str:
-        lines = [f"*{self.date}*"]
+        lines = [f"*{self.date}*", self.summary]
+
+        if self.summary:
+            lines += [f"📑 {self.summary}"]
 
         for change in self.changes:
             emoji = change.category.get_emoji()
