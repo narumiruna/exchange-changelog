@@ -39,7 +39,7 @@ docs:
     method: httpx
   - name: "Bitget Exchange"
     url: "https://www.bitget.com/api-doc/common/changelog"
-    method: httpx
+    method: singlefile
   - name: "OKX Exchange"
     url: https://www.okx.com/docs-v5/log_en/#upcoming-changes
     method: httpx
@@ -61,11 +61,3 @@ prompt: |
   - Only extract dates that have actual changes or release notes associated with them.
   - Skip entries without substantive information or dates that serve as examples or placeholders.
   - Content Integrity: Use only the information directly provided in the context—do not fabricate or include placeholders.
-
-  Output Format:
-  For each extracted entry, provide the following:
-  - date: The release or change date.
-  - markdown_content: The content of the change or release note in bullet-point Markdown format.
-  - keywords: An array of relevant keywords summarizing the main points of each entry (excluding category names).
-  - categories: An array of strings representing the categories related to the update.
-  - upcoming_changes: A summary of the "Upcoming Changes" section, if present. Otherwise, this field should be left blank.
