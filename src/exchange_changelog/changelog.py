@@ -37,6 +37,16 @@ class Category(str, Enum):
     PERFORMANCE_IMPROVEMENTS = "performance improvements"
     SECURITY_UPDATES = "security updates"
 
+    def get_emoji(self) -> str:
+        return {
+            self.BREAKING_CHANGES: "💥",
+            self.NEW_FEATURES: "✨",
+            self.DEPRECATIONS: "🗑️",
+            self.BUG_FIXES: "🐛",
+            self.PERFORMANCE_IMPROVEMENTS: "⚡",
+            self.SECURITY_UPDATES: "🔒",
+        }[self]
+
 
 class Change(BaseModel):
     date: str
@@ -54,7 +64,7 @@ class Change(BaseModel):
             lines += [f"Keywords: {', '.join(self.keywords)}"]
 
         if self.categories:
-            lines += [f"Categories: {', '.join(self.categories)}"]
+            lines += [f"Categories: {', '.join([category.get_emoji()+ category for category in self.categories])}"]
 
         return "\n\n".join(lines)
 
@@ -68,7 +78,7 @@ class Change(BaseModel):
             lines += [f"*Keywords:* {', '.join(self.keywords)}"]
 
         if self.categories:
-            lines += [f"*Categories:* {', '.join(self.categories)}"]
+            lines += [f"*Categories:* {', '.join([category.get_emoji()+ category for category in self.categories])}"]
 
         return "\n\n".join(lines)
 
