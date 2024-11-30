@@ -56,7 +56,7 @@ class Change(BaseModel):
 
     def pretty_repr(self) -> str:
         lines = [
-            f"*{self.date}*",
+            f"📅*{self.date}*",
             self.markdown_content,
         ]
 
@@ -70,7 +70,7 @@ class Change(BaseModel):
 
     def pretty_slack(self) -> str:
         lines = [
-            f"*<{self.date}>*",
+            f"📅*<{self.date}>*",
             self.markdown_content,
         ]
 
@@ -94,7 +94,7 @@ class Changelog(BaseModel):
             lines += [f"# [{name}]({url})"]
 
         if self.upcoming_changes:
-            lines += ["*Upcoming Changes*"]
+            lines += ["🔜*Upcoming Changes*"]
             lines += [self.upcoming_changes]
 
         for changelog in self.changes:
@@ -109,7 +109,7 @@ class Changelog(BaseModel):
             lines += [f"*<{url}|{name}>*"]
 
         if self.upcoming_changes:
-            lines += ["*Upcoming Changes*"]
+            lines += ["🔜*Upcoming Changes*"]
             lines += [self.upcoming_changes]
 
         for changelog in self.changes:
