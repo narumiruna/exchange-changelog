@@ -51,7 +51,7 @@ class Category(str, Enum):
 
 class Change(BaseModel):
     category: Category = Field(..., description="Category of the change, e.g., Improvement, New Feature, Bug Fix.")
-    description: str = Field(..., description="Detailed description of the change.")
+    details: str = Field(..., description="Detailed description of the change.")
 
 
 class ChangeGroup(BaseModel):
@@ -64,7 +64,7 @@ class ChangeGroup(BaseModel):
 
         for change in self.changes:
             emoji = change.category.get_emoji()
-            lines += [f"{emoji} **{change.category.value}**: {change.description}"]
+            lines += [f"{emoji} **{change.category.value}**: {change.details}"]
 
         if self.keywords:
             lines += ["\n*Keywords*: " + ", ".join(f"`{k}`" for k in self.keywords)]
@@ -76,7 +76,7 @@ class ChangeGroup(BaseModel):
 
         for change in self.changes:
             emoji = change.category.get_emoji()
-            lines += [f"{emoji} *{change.category.value}*: {change.description}"]
+            lines += [f"{emoji} *{change.category.value}*: {change.details}"]
 
         if self.keywords:
             lines += ["\n*Keywords*: " + ", ".join(f"`{k}`" for k in self.keywords)]
