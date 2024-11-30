@@ -25,7 +25,7 @@ def extract_recent_changelog(api_doc: APIDoc, cfg: Config) -> Changelog:
     changelog = extract_changelog(text, prompt=cfg.prompt)
 
     # log parsed changes
-    for change in changelog.changes:
+    for change in changelog.change_groups:
         logger.info("change: {}", change)
 
     changelog.select_recent_changes(cfg.num_days)
@@ -68,7 +68,7 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
         if use_redis:
             # filter out already seen changes
             new_changes = []
-            for change in changelog.changes:
+            for change in changelog.change_groups:
                 key = f"changelog:{doc.name}:{change.date}"
                 if redis.exists(key):
                     logger.info("already seen change: {}", change)
@@ -76,9 +76,9 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
 
                 new_changes.append(change)
                 redis.set(key, len(change.markdown_content))
-            changelog.changes = new_changes
+            changelog.change_groups = new_changes
 
-        if changelog.changes:
+        if changelog.change_groups:
             post_slack_message(changelog.to_slack_format(doc.name, doc.url))
 
 
