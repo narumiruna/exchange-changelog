@@ -107,7 +107,9 @@ class Changelog(BaseModel):
         if self.upcoming_changes:
             lines += ["## 🔜 Upcoming Changes", "", self.upcoming_changes, ""]
 
-        lines += ["## 📝 Change History", ""]
+        if self.change_groups:
+            lines += ["## 📝 Change History", ""]
+
         for changelog in self.change_groups:
             lines += [changelog.pretty_repr(), ""]
 
@@ -122,7 +124,9 @@ class Changelog(BaseModel):
         if self.upcoming_changes:
             lines += ["🔜 *Upcoming Changes*", "", self.upcoming_changes, ""]
 
-        lines += ["📝 *Change History*", ""]
+        if self.change_groups:
+            lines += ["📝 *Change History*", ""]
+
         for changelog in self.change_groups:
             lines += [changelog.pretty_slack(), ""]
 
