@@ -51,7 +51,7 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
         except Exception as e:
             logger.error("unable to extract changelog: {}", e)
             post_slack_message(f"unable to extract changelog for {doc.name}, got error: {e}")
-            changelog = Changelog(changes=[], upcoming_changes="")
+            changelog = Changelog(change_groups=[], upcoming_changes="")
         results.append((doc, changelog))
 
     # output to file
