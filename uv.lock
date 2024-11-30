@@ -463,10 +463,12 @@ dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "ruff" },
+    { name = "types-decorator" },
     { name = "types-pyopenssl" },
     { name = "types-pyyaml" },
     { name = "types-redis" },
     { name = "types-requests" },
+    { name = "types-six" },
 ]
 
 [package.metadata]
@@ -494,10 +496,12 @@ dev = [
     { name = "pytest", specifier = ">=8.3.3" },
     { name = "pytest-cov", specifier = ">=5.0.0" },
     { name = "ruff", specifier = ">=0.7.0" },
+    { name = "types-decorator", specifier = ">=5.1.8.20240310" },
     { name = "types-pyopenssl", specifier = ">=24.1.0.20240722" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20240917" },
     { name = "types-redis", specifier = ">=4.6.0.20241004" },
     { name = "types-requests", specifier = ">=2.32.0.20241016" },
+    { name = "types-six", specifier = ">=1.16.21.20241105" },
 ]
 
 [[package]]
@@ -2347,6 +2351,15 @@ wheels = [
 ]
 
 [[package]]
+name = "types-decorator"
+version = "5.1.8.20240310"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c0/88/5097d0d525b34564199ba30faabe418697b2b874ae96f1a2a9512ccf003e/types-decorator-5.1.8.20240310.tar.gz", hash = "sha256:52e316b03783886a8a2abdc228f7071680ba65894545cd2085ebe3cf88684a0e", size = 3734 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c8/3b/9afa3825b9c04079f5494fb54af3b2a60f8796fe207d2442f16477c0b7d6/types_decorator-5.1.8.20240310-py3-none-any.whl", hash = "sha256:3af75dc38f5baf65b9b53ea6661ce2056c5ca7d70d620d0b1f620285c1242757", size = 3102 },
+]
+
+[[package]]
 name = "types-pyopenssl"
 version = "24.1.0.20240722"
 source = { registry = "https://pypi.org/simple" }
@@ -2409,6 +2422,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/01/d7/cc9303a91d1137f11c5376ff4693f017126108f6c379a84ff4ea1b25e2ff/types-setuptools-75.2.0.20241025.tar.gz", hash = "sha256:2949913a518d5285ce00a3b7d88961c80a6e72ffb8f3da0a3f5650ea533bd45e", size = 43477 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/79/49/0f49dbe0b558dd0dd70ba18b7d6d6d31b57c4d2a38c0208edba239d8bfc5/types_setuptools-75.2.0.20241025-py3-none-any.whl", hash = "sha256:6721ac0f1a620321e2ccd87a9a747c4a383dc381f78d894ce37f2455b45fcf1c", size = 67424 },
+]
+
+[[package]]
+name = "types-six"
+version = "1.16.21.20241105"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/09/d6/fbea3d9fc8388abd98081c33ae4ca9ed5b11e947409ccbf85467df49bfe4/types-six-1.16.21.20241105.tar.gz", hash = "sha256:ce3534c38079ec3242f4a20376283eb265a3837f80592b0ecacb14bd41acc29e", size = 10523 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4e/1f/5d6b57b58591f7f70ee7cee6c804280d60ab9ffe5968f205519c0ff9bf3a/types_six-1.16.21.20241105-py3-none-any.whl", hash = "sha256:8b4b29e5c8fe7f1131be8f3cb7cedbcd8bb889707336f32c3fb332c9b1c71991", size = 15371 },
 ]
 
 [[package]]

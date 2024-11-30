@@ -37,6 +37,8 @@ dev-dependencies = [
     "jupyter>=1.1.1",
     "feedparser>=6.0.11",
     "types-redis>=4.6.0.20241004",
+    "types-decorator>=5.1.8.20240310",
+    "types-six>=1.16.21.20241105",
 ]
 
 [tool.ruff]
