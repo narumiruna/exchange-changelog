@@ -1,26 +1,38 @@
 import os
+from functools import cache
 
-from dotenv import find_dotenv
-from dotenv import load_dotenv
 from loguru import logger
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
-load_dotenv(find_dotenv())
+
+@cache
+def get_slack_client() -> WebClient | None:
+    token = os.getenv("SLACK_TOKEN")
+    if token is None:
+        logger.warning("SLACK_TOKEN environment variable is not set")
+        return None
+
+    return WebClient(token=token)
+
+
+@cache
+def get_slack_channel() -> str | None:
+    channel = os.getenv("SLACK_CHANNEL")
+    if channel is None:
+        logger.warning("SLACK_CHANNEL environment variable is not set")
+        return None
+
+    return channel
 
 
 def post_slack_message(text: str) -> None:
-    token = os.getenv("SLACK_TOKEN")
-    if token is None:
-        logger.info("slack token not found")
+    channel = get_slack_channel()
+    client = get_slack_client()
+
+    if channel is None or client is None:
         return
 
-    channel = os.getenv("SLACK_CHANNEL")
-    if channel is None:
-        logger.info("slack channel not found")
-        return
-
-    client = client = WebClient(token=token)
     try:
         client.chat_postMessage(channel=channel, text=text, mrkdwn=True)
     except SlackApiError as e:
