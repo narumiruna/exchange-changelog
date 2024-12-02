@@ -1,5 +1,6 @@
 import functools
 import os
+from collections.abc import Awaitable
 from typing import Any
 
 import redis
@@ -19,13 +20,19 @@ def get_redis_client() -> redis.Redis:
     )
 
 
-def exists(key: str) -> int:
-    return get_redis_client().exists(key)
+def exists(key: str) -> Awaitable[Any] | Any:
+    client = get_redis_client()
+    res = client.exists(key)
+    return res
 
 
-def set(key: str, value: str | int) -> bool | None:
-    return get_redis_client().set(key, value)
+def set(key: str, value: str | int) -> Awaitable[Any] | Any:
+    client = get_redis_client()
+    res = client.set(key, value)
+    return res
 
 
-def get(key: str) -> Any | None:
-    return get_redis_client().get(key)
+def get(key: str) -> Awaitable[Any] | Any:
+    client = get_redis_client()
+    res = client.get(key)
+    return res
