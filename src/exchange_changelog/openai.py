@@ -1,8 +1,6 @@
 import functools
 import os
 from collections.abc import Iterable
-from typing import Literal
-from typing import TypedDict
 from typing import TypeVar
 
 from loguru import logger
@@ -11,11 +9,6 @@ from openai.types.chat import ChatCompletionMessageParam
 from pydantic import BaseModel
 
 T = TypeVar("T", bound=BaseModel)
-
-
-class Message(TypedDict):
-    role: Literal["system", "user", "assistant"]
-    content: str
 
 
 @functools.cache
