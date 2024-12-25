@@ -16,7 +16,7 @@ def load_config(f: str | Path) -> Config:
 class APIDoc(BaseModel):
     name: str
     url: str
-    method: Literal["httpx", "singlefile", "playwright"]
+    method: Literal["httpx", "singlefile", "playwright", "cloudscraper"]
 
 
 class Config(BaseModel):
