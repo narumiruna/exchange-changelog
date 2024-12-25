@@ -4,6 +4,7 @@ import tempfile
 from pathlib import Path
 from typing import Literal
 
+import cloudscraper
 import httpx
 from loguru import logger
 from markdownify import markdownify
@@ -86,7 +87,21 @@ def load_url_with_playwright(url: str) -> str:
     return md_content.strip()
 
 
-def load_html(url: str, method: Literal["httpx", "singlefile", "playwright"]) -> str:
+def load_html_with_cloudscraper(url: str) -> str:
+    headers = {
+        "Accept-Language": "zh-TW,zh;q=0.9,ja;q=0.8,en-US;q=0.7,en;q=0.6",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36",  # noqa
+    }
+
+    scraper = cloudscraper.create_scraper()
+    resp = scraper.get(url, headers=headers)
+    resp.raise_for_status()
+
+    text = markdownify(resp.text, strip=["a", "img"])
+    return text
+
+
+def load_html(url: str, method: Literal["httpx", "singlefile", "playwright", "cloudscraper"]) -> str:
     match method:
         case "singlefile":
             return load_html_with_singlefile(url)
@@ -94,5 +109,7 @@ def load_html(url: str, method: Literal["httpx", "singlefile", "playwright"]) ->
             return load_html_with_httpx(url)
         case "playwright":
             return load_url_with_playwright(url)
+        case "cloudscraper":
+            return load_html_with_cloudscraper(url)
         case _:
             raise ValueError(f"unknown method: {method}")
