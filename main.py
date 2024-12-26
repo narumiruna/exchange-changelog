@@ -11,12 +11,12 @@ from exchange_changelog.changelog import extract_changelog
 from exchange_changelog.config import APIDoc
 from exchange_changelog.config import Config
 from exchange_changelog.config import load_config
-from exchange_changelog.html import load_html
+from exchange_changelog.loaders import PipelineLoader
 from exchange_changelog.slack import post_slack_message
 
 
 def extract_recent_changelog(api_doc: APIDoc, cfg: Config) -> Changelog:
-    text = load_html(api_doc.url, api_doc.method)
+    text = PipelineLoader().load(api_doc.url)
     logger.info("text length: {}", len(text))
 
     # trim text
@@ -49,8 +49,8 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
         try:
             changelog = extract_recent_changelog(doc, cfg)
         except Exception as e:
-            logger.error("unable to extract changelog for {} by {}: {}", doc.name, doc.method, e)
-            post_slack_message(f"unable to extract changelog for {doc.name}, got error: {e}")
+            logger.error("unable to extract changelog for {}, got: {}", doc.name, e)
+            post_slack_message(f"unable to extract changelog for {doc.name}, got: {e}")
             changelog = Changelog(changes=[], upcoming_changes="")
         results.append((doc, changelog))
 
