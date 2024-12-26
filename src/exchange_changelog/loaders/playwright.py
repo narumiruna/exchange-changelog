@@ -19,9 +19,7 @@ class PlaywrightLoader(Loader):
 
     def load(self, url: str) -> str:
         with sync_playwright() as p:
-            browser = p.chromium.launch(
-                headless=False,  # Launching a headless browser
-            )
+            browser = p.chromium.launch(headless=False)
             page = browser.new_page()
 
             try:
