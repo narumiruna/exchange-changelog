@@ -4,51 +4,36 @@ num_days: 7
 trim_len: 10000
 
 docs:
-  # - name: "Woo X"
-  #   url: "https://docs.woox.io/#release-note"
-  #   method: httpx
-  # - name: "Binance"
-  #   url: "https://binance-docs.github.io/apidocs/spot/en/#change-log"
-  #   method: httpx
-  # - name: "Binance Spot Trading"
-  #   url: "https://developers.binance.com/docs/binance-spot-api-docs/CHANGELOG"
-  #   method: httpx
-  # - name: "Binance Margin Trading"
-  #   url: "https://developers.binance.com/docs/margin_trading/change-log"
-  #   method: httpx
-  # - name: "Binance Derivatives Trading"
-  #   url: "https://developers.binance.com/docs/derivatives/change-log"
-  #   method: httpx
-  # - name: "Bitfinex"
-  #   url: "https://docs.bitfinex.com/docs/changelog"
-  #   method: httpx
-  # - name: "Kraken"
-  #   url: "https://docs.kraken.com/api/docs/change-log"
-  #   method: httpx
-  # - name: "Coinbase Exchange"
-  #   url: "https://docs.cdp.coinbase.com/exchange/docs/changelog/"
-  #   method: singlefile
-  # - name: "Coinbase Upcoming Changes"
-  #   url: "https://docs.cdp.coinbase.com/exchange/docs/upcoming-changes"
-  #   method: singlefile
-  # - name: "MAX Exchange"
-  #   url: "https://docs.google.com/document/d/1iLwjhU-AHSLB4UnZh3cPbkYL-M3-R0jW0MEL6iWt410/edit?tab=t.0#heading=h.z31cougdyqo7"
-  #   method: singlefile
-  # - name: "Bybit Exchange"
-  #   url: "https://bybit-exchange.github.io/docs/changelog/v5"
-  #   method: httpx
+  - name: "Woo X"
+    url: "https://docs.woox.io/#release-note"
+  - name: "Binance"
+    url: "https://binance-docs.github.io/apidocs/spot/en/#change-log"
+  - name: "Binance Spot Trading"
+    url: "https://developers.binance.com/docs/binance-spot-api-docs/CHANGELOG"
+  - name: "Binance Margin Trading"
+    url: "https://developers.binance.com/docs/margin_trading/change-log"
+  - name: "Binance Derivatives Trading"
+    url: "https://developers.binance.com/docs/derivatives/change-log"
+  - name: "Bitfinex"
+    url: "https://docs.bitfinex.com/docs/changelog"
+  - name: "Kraken"
+    url: "https://docs.kraken.com/api/docs/change-log"
+  - name: "Coinbase Exchange"
+    url: "https://docs.cdp.coinbase.com/exchange/docs/changelog/"
+  - name: "Coinbase Upcoming Changes"
+    url: "https://docs.cdp.coinbase.com/exchange/docs/upcoming-changes"
+  - name: "MAX Exchange"
+    url: "https://docs.google.com/document/d/1iLwjhU-AHSLB4UnZh3cPbkYL-M3-R0jW0MEL6iWt410/edit?tab=t.0#heading=h.z31cougdyqo7"
+  - name: "Bybit Exchange"
+    url: "https://bybit-exchange.github.io/docs/changelog/v5"
   - name: "Bitget Exchange"
     url: "https://www.bitget.com/api-doc/common/changelog"
-    method: cloudscraper
-  # - name: "OKX Exchange"
-  #   url: https://www.okx.com/docs-v5/log_en/#upcoming-changes
-  #   method: httpx
-  # - name: "Huobi Exchange"
-  #   url: "https://huobiapi.github.io/docs/spot/v1/en/#change-log"
-  #   method: httpx
-  # - name: "HitBTC Exchange"
-  #   url: "https://api.hitbtc.com/#changelog"
-  #   method: httpx
+  - name: "OKX Exchange"
+    url: https://www.okx.com/docs-v5/log_en/#upcoming-changes
+  - name: "Huobi Exchange"
+    url: "https://huobiapi.github.io/docs/spot/v1/en/#change-log"
+  - name: "HitBTC Exchange"
+    url: "https://api.hitbtc.com/#changelog"
 
 prompt: |
   You will be provided with content from an API documentation page in Markdown format.

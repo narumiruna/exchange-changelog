@@ -10,7 +10,6 @@ def test_load_config(tmp_path: Path) -> None:
     docs:
       - name: Test API
         url: http://example.com
-        method: httpx
     num_days: 7
     trim_len: 10000
     slack_channel: test_channel
@@ -24,7 +23,6 @@ def test_load_config(tmp_path: Path) -> None:
     assert len(config.docs) == 1
     assert config.docs[0].name == "Test API"
     assert config.docs[0].url == "http://example.com"
-    assert config.docs[0].method == "httpx"
     assert config.num_days == 7
     assert config.trim_len == 10000
     assert config.slack_channel == "test_channel"
@@ -42,8 +40,7 @@ def test_config_defaults() -> None:
 
 
 def test_apidoc_model() -> None:
-    apidoc = APIDoc(name="Test API", url="http://example.com", method="httpx")
+    apidoc = APIDoc(name="Test API", url="http://example.com")
 
     assert apidoc.name == "Test API"
     assert apidoc.url == "http://example.com"
-    assert apidoc.method == "httpx"

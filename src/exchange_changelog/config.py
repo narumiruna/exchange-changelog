@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Literal
 
 from pydantic import BaseModel
 
@@ -16,7 +15,6 @@ def load_config(f: str | Path) -> Config:
 class APIDoc(BaseModel):
     name: str
     url: str
-    method: Literal["httpx", "singlefile", "playwright", "cloudscraper"]
 
 
 class Config(BaseModel):
