@@ -1,4 +1,4 @@
-name: Gist Dev
+name: Dev
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
         default: "config/dev.yaml"
 
 jobs:
-  gist-dev:
+  dev:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4

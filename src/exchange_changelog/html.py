@@ -11,6 +11,7 @@ from markdownify import markdownify
 from playwright.sync_api import TimeoutError
 from playwright.sync_api import sync_playwright
 
+from .loaders import PipelineLoader
 from .utils import load_text
 
 
@@ -102,14 +103,16 @@ def load_html_with_cloudscraper(url: str) -> str:
 
 
 def load_html(url: str, method: Literal["httpx", "singlefile", "playwright", "cloudscraper"]) -> str:
-    match method:
-        case "singlefile":
-            return load_html_with_singlefile(url)
-        case "httpx":
-            return load_html_with_httpx(url)
-        case "playwright":
-            return load_url_with_playwright(url)
-        case "cloudscraper":
-            return load_html_with_cloudscraper(url)
-        case _:
-            raise ValueError(f"unknown method: {method}")
+    # match method:
+    #     case "singlefile":
+    #         return load_html_with_singlefile(url)
+    #     case "httpx":
+    #         return load_html_with_httpx(url)
+    #     case "playwright":
+    #         return load_url_with_playwright(url)
+    #     case "cloudscraper":
+    #         return load_html_with_cloudscraper(url)
+    #     case _:
+    #         raise ValueError(f"unknown method: {method}")
+
+    return PipelineLoader().load(url)
