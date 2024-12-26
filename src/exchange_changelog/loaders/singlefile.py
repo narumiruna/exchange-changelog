@@ -16,9 +16,10 @@ def get_singlefile_path() -> str:
 
 
 class SinglefileLoader(Loader):
-    def __init__(self, cookies_file: str | None = None, timeout: int = 10_000) -> None:
+    def __init__(self, cookies_file: str | None = None, timeout: int = 10_000, headless: bool = False) -> None:
         self.cookies_file = cookies_file
         self.timeout = timeout
+        self.headless = headless
 
     def load(self, url: str) -> str:
         filename = self.download(url)
@@ -46,6 +47,8 @@ class SinglefileLoader(Loader):
             str(self.timeout),
             "--filename-conflict-action",
             "overwrite",
+            "--browser-headless",
+            str(self.headless).lower(),
             url,
             filename,
         ]
