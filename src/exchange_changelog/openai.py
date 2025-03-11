@@ -4,6 +4,7 @@ from collections.abc import Iterable
 from typing import TypeVar
 
 from loguru import logger
+from openai import AzureOpenAI
 from openai import OpenAI
 from openai.types.chat import ChatCompletionMessageParam
 from pydantic import BaseModel
@@ -13,6 +14,9 @@ T = TypeVar("T", bound=BaseModel)
 
 @functools.cache
 def get_openai_client() -> OpenAI:
+    azure_api_key = os.getenv("AZURE_OPENAI_API_KEY")
+    if azure_api_key:
+        return AzureOpenAI(api_key=azure_api_key)
     return OpenAI()
 
 
