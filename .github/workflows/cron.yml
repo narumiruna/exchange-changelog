@@ -21,7 +21,9 @@ jobs:
           uv run python main.py -c config/default.yaml -o changelog.md --use-redis
         env:
           OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+          AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+          OPENAI_API_VERSION: ${{ secrets.OPENAI_API_VERSION }}
           SINGLEFILE_PATH: ${{ secrets.SINGLEFILE_PATH }}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_CHANNEL: ${{ vars.SLACK_CHANNEL }}
