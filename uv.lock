@@ -531,12 +531,12 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "beautifulsoup4", specifier = "==4.13.3" },
-    { name = "click", specifier = ">=8.1.7" },
+    { name = "click", specifier = "==8.1.8" },
     { name = "cloudscraper", specifier = "==1.2.71" },
-    { name = "gradio", specifier = "==5.24.0" },
+    { name = "gradio", specifier = ">=5.3.0" },
     { name = "httpx", specifier = "==0.28.1" },
     { name = "loguru", specifier = "==0.7.3" },
-    { name = "markdownify", specifier = ">=0.13.1" },
+    { name = "markdownify", specifier = "==1.1.0" },
     { name = "openai", specifier = "==1.72.0" },
     { name = "playwright", specifier = "==1.51.0" },
     { name = "pydantic", specifier = "==2.11.3" },
@@ -644,7 +644,7 @@ wheels = [
 
 [[package]]
 name = "gradio"
-version = "5.24.0"
+version = "5.25.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiofiles" },
@@ -677,9 +677,9 @@ dependencies = [
     { name = "urllib3", marker = "sys_platform == 'emscripten'" },
     { name = "uvicorn", marker = "sys_platform != 'emscripten'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/45/8b/6eb05f80f532090359e476c8299a9738f1cccd7dbf29e28006284d8a8b4b/gradio-5.24.0.tar.gz", hash = "sha256:0f8b958d792e3df1bcf42ce1f95ec3e9cd66df9408bf4e84634e339f15f17833", size = 56274758 }
+sdist = { url = "https://files.pythonhosted.org/packages/e4/d4/fbddd926161b8514d52cf47fd07bc3c8d977ebf62cdf6896dfc933d4e00d/gradio-5.25.0.tar.gz", hash = "sha256:f12fd9a07838636382d9047cd3fc80c3fbe41417672e8d2c4b8902360fc3b395", size = 56362926 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e5/84/e04bfac962e4f792423dde8f40bbe24e3f4e4158ab2fcee7c1c2fb33239e/gradio-5.24.0-py3-none-any.whl", hash = "sha256:e0ca054d0195c907fcd328428dd97f9428e6787bab9dc74314b8cce6fd66fa62", size = 46863096 },
+    { url = "https://files.pythonhosted.org/packages/8e/b1/62d4b3f0573dfdb3b7ba1748f030a8433b6a7bc00c60e643dd1904549e43/gradio-5.25.0-py3-none-any.whl", hash = "sha256:573b7814598dded2b648f8f77c4959dcff226ef4b12f956ca1af1a76a6469c48", size = 46933709 },
 ]
 
 [[package]]
