@@ -530,20 +530,20 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "beautifulsoup4", specifier = "==4.13.3" },
-    { name = "click", specifier = "==8.1.8" },
-    { name = "cloudscraper", specifier = "==1.2.71" },
+    { name = "beautifulsoup4", specifier = ">=4.12.3" },
+    { name = "click", specifier = ">=8.1.7" },
+    { name = "cloudscraper", specifier = ">=1.2.71" },
     { name = "gradio", specifier = ">=5.3.0" },
-    { name = "httpx", specifier = "==0.28.1" },
-    { name = "loguru", specifier = "==0.7.3" },
-    { name = "markdownify", specifier = "==1.1.0" },
-    { name = "openai", specifier = "==1.72.0" },
-    { name = "playwright", specifier = "==1.51.0" },
-    { name = "pydantic", specifier = "==2.11.3" },
-    { name = "python-dotenv", specifier = "==1.1.0" },
-    { name = "pyyaml", specifier = "==6.0.2" },
-    { name = "redis", specifier = "==5.2.1" },
-    { name = "slack-sdk", specifier = "==3.35.0" },
+    { name = "httpx", specifier = ">=0.27.2" },
+    { name = "loguru", specifier = ">=0.7.2" },
+    { name = "markdownify", specifier = ">=0.13.1" },
+    { name = "openai", specifier = ">=1.52.2" },
+    { name = "playwright", specifier = ">=1.48.0" },
+    { name = "pydantic", specifier = ">=2.9.2" },
+    { name = "python-dotenv", specifier = ">=1.0.1" },
+    { name = "pyyaml", specifier = ">=6.0.2" },
+    { name = "redis", specifier = ">=5.2.0" },
+    { name = "slack-sdk", specifier = ">=3.33.1" },
 ]
 
 [package.metadata.requires-dev]
@@ -1494,7 +1494,7 @@ wheels = [
 
 [[package]]
 name = "openai"
-version = "1.72.0"
+version = "1.74.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
@@ -1506,9 +1506,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/41/56/41de36c0e9f787c406211552ecf2ca4fba3db900207c5c158c4dc67263fc/openai-1.72.0.tar.gz", hash = "sha256:f51de971448905cc90ed5175a5b19e92fd94e31f68cde4025762f9f5257150db", size = 426061 }
+sdist = { url = "https://files.pythonhosted.org/packages/75/86/c605a6e84da0248f2cebfcd864b5a6076ecf78849245af5e11d2a5ec7977/openai-1.74.0.tar.gz", hash = "sha256:592c25b8747a7cad33a841958f5eb859a785caea9ee22b9e4f4a2ec062236526", size = 427571 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/03/1c/a0870f31bd71244c8c3a82e171677d9a148a8ea1cb157308cb9e06a41a37/openai-1.72.0-py3-none-any.whl", hash = "sha256:34f5496ba5c8cb06c592831d69e847e2d164526a2fb92afdc3b5cf2891c328c3", size = 643863 },
+    { url = "https://files.pythonhosted.org/packages/a9/91/8c150f16a96367e14bd7d20e86e0bbbec3080e3eb593e63f21a7f013f8e4/openai-1.74.0-py3-none-any.whl", hash = "sha256:aff3e0f9fb209836382ec112778667027f4fd6ae38bdb2334bc9e173598b092a", size = 644790 },
 ]
 
 [[package]]
