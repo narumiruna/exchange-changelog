@@ -644,7 +644,7 @@ wheels = [
 
 [[package]]
 name = "gradio"
-version = "5.25.1"
+version = "5.25.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiofiles" },
@@ -677,9 +677,9 @@ dependencies = [
     { name = "urllib3", marker = "sys_platform == 'emscripten'" },
     { name = "uvicorn", marker = "sys_platform != 'emscripten'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/09/1a/068a1e1c513718c6a08f04b6dbe350c655f8c7a8d78e969b94e480ec9b18/gradio-5.25.1.tar.gz", hash = "sha256:c611cec8e6dd61e7e72b5b88de20369c368cbc3da7db47dadd4d373e3e45df48", size = 56361025 }
+sdist = { url = "https://files.pythonhosted.org/packages/89/87/560956576d6122e46f962d1b204081812e4a1bd29de14879355243ee8884/gradio-5.25.2.tar.gz", hash = "sha256:23dee468fde733573dcd07fc2bb72d709e6d0605799904a85214786ec4caba7a", size = 56363654 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/86/c7/75c21dacb2e09fe5fd7c571dfd14a83dd2ffaf69cb3e2f5347d264a217ef/gradio-5.25.1-py3-none-any.whl", hash = "sha256:af437516362252168a64c41a8f41d39818ace8bb0bee9786e20475dea4302bd4", size = 46936479 },
+    { url = "https://files.pythonhosted.org/packages/34/77/880f74e82a1320d08133159555e134716db846343c6ad39d8642ef4c5346/gradio-5.25.2-py3-none-any.whl", hash = "sha256:07a1902b46db0cf822b6de995682cba2fdafb7c332a6e1e208fb9b67b19cb3be", size = 46937094 },
 ]
 
 [[package]]
