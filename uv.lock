@@ -530,20 +530,20 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "beautifulsoup4", specifier = "==4.13.3" },
-    { name = "click", specifier = "==8.1.8" },
-    { name = "cloudscraper", specifier = "==1.2.71" },
+    { name = "beautifulsoup4", specifier = ">=4.12.3" },
+    { name = "click", specifier = ">=8.1.7" },
+    { name = "cloudscraper", specifier = ">=1.2.71" },
     { name = "gradio", specifier = ">=5.3.0" },
-    { name = "httpx", specifier = "==0.28.1" },
-    { name = "loguru", specifier = "==0.7.3" },
-    { name = "markdownify", specifier = "==1.1.0" },
-    { name = "openai", specifier = "==1.72.0" },
-    { name = "playwright", specifier = "==1.51.0" },
-    { name = "pydantic", specifier = "==2.11.3" },
-    { name = "python-dotenv", specifier = "==1.1.0" },
-    { name = "pyyaml", specifier = "==6.0.2" },
-    { name = "redis", specifier = "==5.2.1" },
-    { name = "slack-sdk", specifier = "==3.35.0" },
+    { name = "httpx", specifier = ">=0.27.2" },
+    { name = "loguru", specifier = ">=0.7.2" },
+    { name = "markdownify", specifier = ">=0.13.1" },
+    { name = "openai", specifier = ">=1.52.2" },
+    { name = "playwright", specifier = ">=1.48.0" },
+    { name = "pydantic", specifier = ">=2.9.2" },
+    { name = "python-dotenv", specifier = ">=1.0.1" },
+    { name = "pyyaml", specifier = ">=6.0.2" },
+    { name = "redis", specifier = ">=5.2.0" },
+    { name = "slack-sdk", specifier = ">=3.33.1" },
 ]
 
 [package.metadata.requires-dev]
@@ -644,7 +644,7 @@ wheels = [
 
 [[package]]
 name = "gradio"
-version = "5.25.0"
+version = "5.25.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiofiles" },
@@ -677,9 +677,9 @@ dependencies = [
     { name = "urllib3", marker = "sys_platform == 'emscripten'" },
     { name = "uvicorn", marker = "sys_platform != 'emscripten'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e4/d4/fbddd926161b8514d52cf47fd07bc3c8d977ebf62cdf6896dfc933d4e00d/gradio-5.25.0.tar.gz", hash = "sha256:f12fd9a07838636382d9047cd3fc80c3fbe41417672e8d2c4b8902360fc3b395", size = 56362926 }
+sdist = { url = "https://files.pythonhosted.org/packages/09/1a/068a1e1c513718c6a08f04b6dbe350c655f8c7a8d78e969b94e480ec9b18/gradio-5.25.1.tar.gz", hash = "sha256:c611cec8e6dd61e7e72b5b88de20369c368cbc3da7db47dadd4d373e3e45df48", size = 56361025 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8e/b1/62d4b3f0573dfdb3b7ba1748f030a8433b6a7bc00c60e643dd1904549e43/gradio-5.25.0-py3-none-any.whl", hash = "sha256:573b7814598dded2b648f8f77c4959dcff226ef4b12f956ca1af1a76a6469c48", size = 46933709 },
+    { url = "https://files.pythonhosted.org/packages/86/c7/75c21dacb2e09fe5fd7c571dfd14a83dd2ffaf69cb3e2f5347d264a217ef/gradio-5.25.1-py3-none-any.whl", hash = "sha256:af437516362252168a64c41a8f41d39818ace8bb0bee9786e20475dea4302bd4", size = 46936479 },
 ]
 
 [[package]]
