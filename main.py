@@ -1,7 +1,8 @@
 from pathlib import Path
+from typing import Annotated
 
-import click
 import kabigon
+import typer
 from dotenv import find_dotenv
 from dotenv import load_dotenv
 from loguru import logger
@@ -41,11 +42,11 @@ def extract_recent_changelog(api_doc: Document, cfg: Config) -> Changelog:
     return changelog
 
 
-@click.command()
-@click.option("-c", "--config-file", type=click.Path(path_type=Path), default="config/default.yaml", help="config file")
-@click.option("-o", "--output-file", type=click.Path(path_type=Path), default="changelog.md", help="output file")
-@click.option("-r", "--use-redis", is_flag=True, help="use redis")
-def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
+def main(
+    config_file: Annotated[Path, typer.Option("-c", "--config-file", help="config file")] = Path("config/default.yaml"),
+    output_file: Annotated[Path, typer.Option("-o", "--output-file", help="output file")] = Path("changelog.md"),
+    use_redis: Annotated[bool, typer.Option("-r", "--use-redis", help="use redis")] = False,
+) -> None:
     load_dotenv(find_dotenv())
 
     logger.info("loading config file: {}", config_file)
@@ -91,4 +92,4 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
 
 
 if __name__ == "__main__":
-    main()
+    typer.run(main)
