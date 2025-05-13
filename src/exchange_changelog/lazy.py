@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from functools import cache
+from typing import Any
 from typing import Literal
 from typing import TypeVar
 
@@ -37,7 +38,7 @@ def get_openai_model(
     api_type: Literal["responses", "chat_completions"] = "responses",
 ) -> Model:
     if model is None:
-        model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+        model = os.getenv("OPENAI_MODEL", "gpt-4o")
 
     openai_client = get_openai_client()
 
@@ -48,13 +49,6 @@ def get_openai_model(
             return OpenAIChatCompletionsModel(model, openai_client=openai_client)
         case _:
             raise ValueError(f"Invalid API type: {api_type}. Use 'responses' or 'chat_completions'.")
-
-
-@cache
-def get_openai_model_settings():
-    model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-    temperature = None if model == "o3-mini" else float(os.getenv("OPENAI_TEMPERATURE", 0.0))
-    return ModelSettings(temperature=temperature)
 
 
 def _create_agent(
@@ -82,7 +76,7 @@ async def lazy_run(
     model: Model | None = None,
     model_settings: ModelSettings | None = None,
     output_type: type[T] | None = None,
-) -> T:
+) -> Any:
     """Run the agent with the given input and instructions.
 
     Args:
@@ -117,7 +111,7 @@ def lazy_run_sync(
     model: Model | None = None,
     model_settings: ModelSettings | None = None,
     output_type: type[T] | None = None,
-) -> str | T:
+) -> Any:
     """Run the agent with the given input and instructions.
 
     Args:
