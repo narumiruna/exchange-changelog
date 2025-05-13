@@ -1,3 +1,4 @@
+import asyncio
 from pathlib import Path
 from typing import Annotated
 
@@ -16,50 +17,44 @@ from exchange_changelog.config import load_config
 from exchange_changelog.slack import post_slack_message
 from exchange_changelog.utils import configure_langfuse
 
-loader = kabigon.Compose(
-    [
-        kabigon.HttpxLoader(),
-        kabigon.PlaywrightLoader(timeout=50_000, wait_until="networkidle"),
-        kabigon.PlaywrightLoader(timeout=10_000),
-    ]
-)
 
+class App:
+    def __init__(self, config: Config, use_redis: bool, output_file: str | Path) -> None:
+        self.config = config
+        self.use_redis = use_redis
+        self.output_file = Path(output_file)
 
-def extract_recent_changelog(api_doc: Document, cfg: Config) -> Changelog:
-    text = loader.load(api_doc.url)
-    logger.info("text length: {}", len(text))
+        self.lock = asyncio.Lock()
+        self.results: list[tuple[Document, Changelog]] = []
+        self.loader = kabigon.Compose(
+            [
+                kabigon.HttpxLoader(),
+                kabigon.PlaywrightLoader(timeout=50_000, wait_until="networkidle"),
+                kabigon.PlaywrightLoader(timeout=10_000),
+            ]
+        )
 
-    # trim text
-    text = text[: cfg.trim_len]
+    async def extract_recent_changelog(self, api_doc: Document) -> Changelog:
+        text = await self.loader.async_load(api_doc.url)
+        logger.info("text length: {}", len(text))
 
-    changelog = extract_changelog(text, prompt=cfg.prompt)
+        # trim text
+        text = text[: self.config.trim_len]
 
-    # log parsed changes
-    for change in changelog.changes:
-        logger.info("change: {}", change)
+        changelog = await extract_changelog(text, prompt=self.config.prompt)
 
-    changelog.select_recent_changes(cfg.num_days)
+        # log parsed changes
+        for change in changelog.changes:
+            logger.info("change: {}", change)
 
-    return changelog
+        changelog.select_recent_changes(self.config.num_days)
 
+        return changelog
 
-def main(
-    config_file: Annotated[Path, typer.Option("-c", "--config-file", help="config file")] = Path("config/default.yaml"),
-    output_file: Annotated[Path, typer.Option("-o", "--output-file", help="output file")] = Path("changelog.md"),
-    use_redis: Annotated[bool, typer.Option("-r", "--use-redis", help="use redis")] = False,
-) -> None:
-    load_dotenv(find_dotenv())
-    configure_langfuse()
-
-    logger.info("loading config file: {}", config_file)
-    cfg = load_config(config_file)
-    logger.info("prompt:\n{}", cfg.prompt)
-
-    results: list[tuple[Document, Changelog]] = []
-    for doc in cfg.docs:
+    async def process_doc(self, doc: Document) -> None:
         try:
-            changelog = extract_recent_changelog(doc, cfg)
-            if use_redis:
+            changelog = await self.extract_recent_changelog(doc)
+            if self.use_redis:
                 # filter out already seen changes
                 new_changes = []
                 for change in changelog.changes:
@@ -79,16 +74,46 @@ def main(
             post_slack_message(f"unable to extract changelog for {doc.name}, got: {e}")
             changelog = Changelog(changes=[], upcoming_changes="")
 
-        results.append((doc, changelog))
+        async with self.lock:
+            self.results.append((doc, changelog))
 
-    # output to file
-    lines = []
-    for doc, changelog in results:
-        lines += [changelog.to_markdown(doc.name, doc.url)]
-        logger.debug("changelog:\n{}", changelog.to_markdown(doc.name, doc.url))
+    async def _run(self) -> None:
+        tasks = [self.process_doc(doc) for doc in self.config.docs]
+        await asyncio.gather(*tasks)
 
-    with output_file.open("w") as f:
-        f.write("\n\n".join(lines))
+    def write_file(self) -> None:
+        with self.output_file.open("w", encoding="utf-8") as f:
+            f.write(
+                "\n\n".join(
+                    [
+                        changelog.to_markdown(
+                            doc.name,
+                            doc.url,
+                        )
+                        for doc, changelog in self.results
+                    ]
+                )
+            )
+
+    def run(self) -> None:
+        asyncio.run(self._run())
+        self.write_file()
+
+
+def main(
+    config_file: Annotated[Path, typer.Option("-c", "--config-file", help="config file")] = Path("config/default.yaml"),
+    output_file: Annotated[Path, typer.Option("-o", "--output-file", help="output file")] = Path("changelog.md"),
+    use_redis: Annotated[bool, typer.Option("-r", "--use-redis", help="use redis")] = False,
+) -> None:
+    load_dotenv(find_dotenv())
+    configure_langfuse()
+
+    logger.info("loading config file: {}", config_file)
+    config = load_config(config_file)
+    logger.info("prompt:\n{}", config.prompt)
+
+    app = App(config, use_redis, output_file)
+    app.run()
 
 
 if __name__ == "__main__":

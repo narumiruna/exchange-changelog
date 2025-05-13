@@ -7,7 +7,7 @@ from typing import Final
 from loguru import logger
 from pydantic import BaseModel
 
-from .lazy import lazy_run_sync
+from .lazy import lazy_run
 
 PROMPT: Final[str] = """
 You will be provided with content from an API documentation page in Markdown format. Your task is to extract and summarize up to 10 changes or release notes, prioritizing them by date as found in sections such as changelog or release notes. Additionally, extract and summarize upcoming changes only if the main heading "Upcoming Changes" is present; otherwise, leave the corresponding field blank.
@@ -141,12 +141,12 @@ class Changelog(BaseModel):
         self.changes = recent_changes
 
 
-def extract_changelog(text: str, prompt: str | None = None) -> Changelog:
+async def extract_changelog(text: str, prompt: str | None = None) -> Changelog:
     # https://platform.openai.com/docs/guides/structured-outputs
     if prompt is None:
         prompt = PROMPT
 
-    return lazy_run_sync(
+    return await lazy_run(
         input=text,
         instructions=prompt,
         output_type=Changelog,
