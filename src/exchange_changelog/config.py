@@ -2,12 +2,15 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from loguru import logger
 from pydantic import BaseModel
 
 from .utils import load_yaml
 
 
 def load_config(f: str | Path) -> Config:
+    logger.info("Loading config from {}", f)
+
     data = load_yaml(f)
     return Config.model_validate(data)
 

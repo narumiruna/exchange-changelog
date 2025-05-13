@@ -1,3 +1,4 @@
+import asyncio
 from pathlib import Path
 from typing import Annotated
 
@@ -16,31 +17,87 @@ from exchange_changelog.config import load_config
 from exchange_changelog.slack import post_slack_message
 from exchange_changelog.utils import configure_langfuse
 
-loader = kabigon.Compose(
-    [
-        kabigon.HttpxLoader(),
-        kabigon.PlaywrightLoader(timeout=50_000, wait_until="networkidle"),
-        kabigon.PlaywrightLoader(timeout=10_000),
-    ]
-)
 
+class App:
+    def __init__(self, config: Config, use_redis: bool, output_file: str | Path) -> None:
+        self.config = config
+        self.use_redis = use_redis
+        self.output_file = Path(output_file)
 
-def extract_recent_changelog(api_doc: Document, cfg: Config) -> Changelog:
-    text = loader.load(api_doc.url)
-    logger.info("text length: {}", len(text))
+        self.lock = asyncio.Lock()
+        self.results: list[tuple[Document, Changelog]] = []
+        self.loader = kabigon.Compose(
+            [
+                kabigon.HttpxLoader(),
+                kabigon.PlaywrightLoader(timeout=50_000, wait_until="networkidle"),
+                kabigon.PlaywrightLoader(timeout=10_000),
+            ]
+        )
 
-    # trim text
-    text = text[: cfg.trim_len]
+    async def extract_recent_changelog(self, api_doc: Document) -> Changelog:
+        text = await self.loader.async_load(api_doc.url)
+        logger.info("text length: {}", len(text))
 
-    changelog = extract_changelog(text, prompt=cfg.prompt)
+        # trim text
+        text = text[: self.config.trim_len]
 
-    # log parsed changes
-    for change in changelog.changes:
-        logger.info("change: {}", change)
+        changelog = await extract_changelog(text, prompt=self.config.prompt)
 
-    changelog.select_recent_changes(cfg.num_days)
+        # log parsed changes
+        for change in changelog.changes:
+            logger.info("change: {}", change)
 
-    return changelog
+        changelog.select_recent_changes(self.config.num_days)
+
+        return changelog
+
+    async def process_doc(self, doc: Document) -> None:
+        try:
+            changelog = await self.extract_recent_changelog(doc)
+            if self.use_redis:
+                # filter out already seen changes
+                new_changes = []
+                for change in changelog.changes:
+                    key = f"changelog:{doc.name}:{change.date}"
+                    if await redis.exists(key):
+                        logger.info("already seen change: {}", change)
+                        continue
+
+                    new_changes.append(change)
+                    await redis.set(key, len(change.items))
+                changelog.changes = new_changes
+            # post to slack
+            if changelog.changes:
+                post_slack_message(changelog.to_slack(doc.name, doc.url))
+        except Exception as e:
+            logger.error("unable to extract changelog for {}, got: {}", doc.name, e)
+            post_slack_message(f"unable to extract changelog for {doc.name}, got: {e}")
+            changelog = Changelog(changes=[], upcoming_changes="")
+
+        async with self.lock:
+            self.results.append((doc, changelog))
+
+    async def _run(self) -> None:
+        tasks = [self.process_doc(doc) for doc in self.config.docs]
+        await asyncio.gather(*tasks)
+
+    def write_file(self) -> None:
+        with self.output_file.open("w", encoding="utf-8") as f:
+            f.write(
+                "\n\n".join(
+                    [
+                        changelog.to_markdown(
+                            doc.name,
+                            doc.url,
+                        )
+                        for doc, changelog in self.results
+                    ]
+                )
+            )
+
+    def run(self) -> None:
+        asyncio.run(self._run())
+        self.write_file()
 
 
 def main(
@@ -51,44 +108,9 @@ def main(
     load_dotenv(find_dotenv())
     configure_langfuse()
 
-    logger.info("loading config file: {}", config_file)
-    cfg = load_config(config_file)
-    logger.info("prompt:\n{}", cfg.prompt)
-
-    results: list[tuple[Document, Changelog]] = []
-    for doc in cfg.docs:
-        try:
-            changelog = extract_recent_changelog(doc, cfg)
-            if use_redis:
-                # filter out already seen changes
-                new_changes = []
-                for change in changelog.changes:
-                    key = f"changelog:{doc.name}:{change.date}"
-                    if redis.exists(key):
-                        logger.info("already seen change: {}", change)
-                        continue
-
-                    new_changes.append(change)
-                    redis.set(key, len(change.items))
-                changelog.changes = new_changes
-            # post to slack
-            if changelog.changes:
-                post_slack_message(changelog.to_slack(doc.name, doc.url))
-        except Exception as e:
-            logger.error("unable to extract changelog for {}, got: {}", doc.name, e)
-            post_slack_message(f"unable to extract changelog for {doc.name}, got: {e}")
-            changelog = Changelog(changes=[], upcoming_changes="")
-
-        results.append((doc, changelog))
-
-    # output to file
-    lines = []
-    for doc, changelog in results:
-        lines += [changelog.to_markdown(doc.name, doc.url)]
-        logger.debug("changelog:\n{}", changelog.to_markdown(doc.name, doc.url))
-
-    with output_file.open("w") as f:
-        f.write("\n\n".join(lines))
+    config = load_config(config_file)
+    app = App(config, use_redis, output_file)
+    app.run()
 
 
 if __name__ == "__main__":
