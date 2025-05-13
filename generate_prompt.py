@@ -7,8 +7,41 @@ from agents import Runner
 from agents import TResponseInputItem
 from dotenv import find_dotenv
 from dotenv import load_dotenv
+from pydantic import BaseModel
 
 from exchange_changelog.lazy import get_openai_model
+
+
+class Example(BaseModel):
+    input: str
+    output: str
+
+
+class Prompt(BaseModel):
+    description: str
+    guidelines: list[str]
+    steps: list[str]
+    output_format: str
+    examples: list[Example]
+    notes: list[str]
+
+    def __str__(self) -> str:
+        return "\n".join(
+            [
+                self.description,
+                "# Guidelines",
+                "\n".join([f"- {g}" for g in self.guidelines]),
+                "# Steps",
+                "\n".join([f"- {s}" for s in self.steps]),
+                "# Output Format",
+                self.output_format,
+                "# Examples",
+                "\n".join([f"- {e.input} -> {e.output}" for e in self.examples]),
+                "# Notes",
+                "\n".join([f"- {n}" for n in self.notes]),
+            ]
+        )
+
 
 META_PROMPT = """
 Given a task description or existing prompt, produce a detailed system prompt to guide a language model in completing the task effectively.
@@ -64,6 +97,7 @@ class Bot:
             instructions=META_PROMPT,
             model=get_openai_model(),
             model_settings=ModelSettings(temperature=0.0),
+            output_type=Prompt,
         )
         self.input_items: list[TResponseInputItem] = []
 
@@ -78,7 +112,7 @@ class Bot:
         result = await Runner.run(self.agent, input=self.input_items)
         self.input_items = result.to_input_list()
 
-        return result.final_output
+        return str(result.final_output)
 
 
 @cache
