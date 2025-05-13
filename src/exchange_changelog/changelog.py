@@ -30,12 +30,12 @@ For each extracted entry, provide the following:
 
 
 class Category(str, Enum):
-    BREAKING_CHANGES = "breaking changes"
-    NEW_FEATURES = "new features"
-    DEPRECATIONS = "deprecations"
-    BUG_FIXES = "bug fixes"
-    PERFORMANCE_IMPROVEMENTS = "performance improvements"
-    SECURITY_UPDATES = "security updates"
+    BREAKING_CHANGES = "BREAKING_CHANGES"
+    NEW_FEATURES = "NEW_FEATURES"
+    DEPRECATIONS = "DEPRECATIONS"
+    BUG_FIXES = "BUG_FIXES"
+    PERFORMANCE_IMPROVEMENTS = "PERFORMANCE_IMPROVEMENTS"
+    SECURITY_UPDATES = "SECURITY_UPDATES"
 
     def get_emoji(self) -> str:
         return {
@@ -58,29 +58,19 @@ class Change(BaseModel):
         lines = [
             f"📅*{self.date}*",
             "\n".join([f"- {item}" for item in self.items]),
+            ", ".join([f"🏷️{keyword}" for keyword in self.keywords]),
+            ", ".join([category.get_emoji() + category for category in self.categories]),
         ]
-
-        if self.keywords:
-            lines += [f"Keywords: {', '.join(self.keywords)}"]
-
-        if self.categories:
-            lines += [f"Categories: {', '.join([category.get_emoji()+ category for category in self.categories])}"]
-
-        return "\n".join(lines)
+        return "\n\n".join(lines)
 
     def to_slack(self) -> str:
         lines = [
             f"📅*<{self.date}>*",
             "\n".join([f"- {item}" for item in self.items]),
+            ", ".join([f"🏷️{keyword}" for keyword in self.keywords]),
+            ", ".join([category.get_emoji() + category for category in self.categories]),
         ]
-
-        if self.keywords:
-            lines += [f"*Keywords:* {', '.join(self.keywords)}"]
-
-        if self.categories:
-            lines += [f"*Categories:* {', '.join([category.get_emoji()+ category for category in self.categories])}"]
-
-        return "\n".join(lines)
+        return "\n\n".join(lines)
 
 
 class Changelog(BaseModel):
