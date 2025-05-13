@@ -1,23 +1,31 @@
-FROM python:3.11-slim
-
-RUN apt-get update \
-    && apt-get install -y \
-    chromium \
-    git \
-    nodejs \
-    npm \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN npm install -g single-file-cli
+# https://docs.astral.sh/uv/guides/integration/docker/#non-editable-installs
+ARG PYTHON_VERSION=3.12
+ARG DEBIAN_VERSION=bookworm
+FROM ghcr.io/astral-sh/uv:python${PYTHON_VERSION}-${DEBIAN_VERSION}-slim AS uv
 
 WORKDIR /app
 
-COPY src src
-COPY main.py .
-COPY pyproject.toml .
-COPY uv.lock .
-COPY README.md .
-COPY config config
-RUN pip install --no-cache-dir .
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_LINK_MODE=copy
 
-CMD ["python", "main.py"]
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --frozen --no-install-project --no-dev --no-editable
+
+ADD . /app
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev --no-editable --all-extras
+
+FROM python:${PYTHON_VERSION}-slim-${DEBIAN_VERSION}
+
+WORKDIR /app
+
+COPY --from=uv --chown=app:app /app/.venv /app/.venv
+
+ENV PATH="/app/.venv/bin:$PATH"
+
+RUN playwright install --with-deps chromium \
+    && apt-get update \
+    && apt-get install -y xauth \
+    && rm -rf /var/lib/apt/lists/*
