@@ -1,3 +1,5 @@
+from functools import cache
+
 import chainlit as cl
 from agents import Agent
 from agents import ModelSettings
@@ -79,11 +81,13 @@ class Bot:
         return result.final_output
 
 
-load_dotenv(find_dotenv())
-bot = Bot()
+@cache
+def get_bot() -> Bot:
+    load_dotenv(find_dotenv())
+    return Bot()
 
 
 @cl.on_message
 async def chat(message: cl.Message) -> None:
-    response = await bot.run(message.content)
+    response = await get_bot().run(message.content)
     await cl.Message(content=response).send()
