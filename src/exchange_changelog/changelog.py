@@ -118,17 +118,11 @@ class Changelog(BaseModel):
 
         for change in self.changes:
             blocks.append(HeaderBlock(text=f"📅*<{change.date}>*"))
-            blocks.append(
-                SectionBlock(text=[MarkdownTextObject(text="\n".join([f"- {item}" for item in change.items]))])
-            )
-            blocks.append(
-                SectionBlock(text=[TextObject(text=" ".join([f"🏷️{keyword}" for keyword in change.keywords]))])
-            )
+            blocks.append(SectionBlock(text=MarkdownTextObject(text="\n".join([f"- {item}" for item in change.items]))))
+            blocks.append(SectionBlock(text=TextObject(text=" ".join([f"🏷️{keyword}" for keyword in change.keywords]))))
             blocks.append(
                 SectionBlock(
-                    text=[
-                        TextObject(text=" ".join([category.get_emoji() + category for category in change.categories]))
-                    ]
+                    text=TextObject(text=" ".join([category.get_emoji() + category for category in change.categories]))
                 )
             )
             blocks.append(DividerBlock())
