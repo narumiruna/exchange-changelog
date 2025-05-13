@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from exchange_changelog.config import Config
-from exchange_changelog.config import Document
-from exchange_changelog.config import load_config
+from exchangechangelog.config import Config
+from exchangechangelog.config import Document
+from exchangechangelog.config import load_config
 
 
 def test_load_config(tmp_path: Path) -> None:

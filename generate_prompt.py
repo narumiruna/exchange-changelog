@@ -9,7 +9,7 @@ from dotenv import find_dotenv
 from dotenv import load_dotenv
 from pydantic import BaseModel
 
-from exchange_changelog.lazy import get_openai_model
+from exchangechangelog.lazy import get_openai_model
 
 
 class Example(BaseModel):

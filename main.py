@@ -8,14 +8,14 @@ from dotenv import find_dotenv
 from dotenv import load_dotenv
 from loguru import logger
 
-from exchange_changelog import redis
-from exchange_changelog.changelog import Changelog
-from exchange_changelog.changelog import extract_changelog
-from exchange_changelog.config import Config
-from exchange_changelog.config import Document
-from exchange_changelog.config import load_config
-from exchange_changelog.slack import post_slack_message
-from exchange_changelog.utils import configure_langfuse
+from exchangechangelog import redis
+from exchangechangelog.changelog import Changelog
+from exchangechangelog.changelog import extract_changelog
+from exchangechangelog.config import Config
+from exchangechangelog.config import Document
+from exchangechangelog.config import load_config
+from exchangechangelog.slack import post_slack_message
+from exchangechangelog.utils import configure_langfuse
 
 
 class App:
