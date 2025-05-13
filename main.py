@@ -57,10 +57,26 @@ def main(
     for doc in cfg.docs:
         try:
             changelog = extract_recent_changelog(doc, cfg)
+            if use_redis:
+                # filter out already seen changes
+                new_changes = []
+                for change in changelog.changes:
+                    key = f"changelog:{doc.name}:{change.date}"
+                    if redis.exists(key):
+                        logger.info("already seen change: {}", change)
+                        continue
+
+                    new_changes.append(change)
+                    redis.set(key, len(change.items))
+                changelog.changes = new_changes
+            # post to slack
+            if changelog.changes:
+                post_slack_message(changelog.to_slack(doc.name, doc.url))
         except Exception as e:
             logger.error("unable to extract changelog for {}, got: {}", doc.name, e)
             post_slack_message(f"unable to extract changelog for {doc.name}, got: {e}")
             changelog = Changelog(changes=[], upcoming_changes="")
+
         results.append((doc, changelog))
 
     # output to file
@@ -71,24 +87,6 @@ def main(
 
     with output_file.open("w") as f:
         f.write("\n\n".join(lines))
-
-    # post to slack
-    for doc, changelog in results:
-        if use_redis:
-            # filter out already seen changes
-            new_changes = []
-            for change in changelog.changes:
-                key = f"changelog:{doc.name}:{change.date}"
-                if redis.exists(key):
-                    logger.info("already seen change: {}", change)
-                    continue
-
-                new_changes.append(change)
-                redis.set(key, len(change.items))
-            changelog.changes = new_changes
-
-        if changelog.changes:
-            post_slack_message(changelog.to_slack(doc.name, doc.url))
 
 
 if __name__ == "__main__":
