@@ -28,7 +28,7 @@ class App:
         self.results: list[tuple[Document, Changelog]] = []
         self.loader = kabigon.Compose(
             [
-                kabigon.HttpxLoader(),
+                # kabigon.HttpxLoader(),
                 kabigon.PlaywrightLoader(timeout=50_000, wait_until="networkidle"),
                 kabigon.PlaywrightLoader(timeout=10_000),
             ]
