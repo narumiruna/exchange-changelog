@@ -12,13 +12,6 @@ def get_redis_client() -> redis.Redis:
     db = int(os.getenv("REDIS_DB", 0))
 
     return redis.Redis.from_url(f"redis://{host}:{port}/{db}")
-    # return redis.Redis(
-    #     host=host,
-    #     port=port,
-    #     db=db,
-    #     charset="utf-8",
-    #     decode_responses=True,
-    # )
 
 
 async def exists(key: str) -> Any:
