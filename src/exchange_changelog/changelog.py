@@ -23,7 +23,7 @@ Instructions:
 Output Format:
 For each extracted entry, provide the following:
 - date: The release or change date.
-- markdown_content: The content of the change or release note in Markdown format.
+- items: The content of the change or release note in plain text.
 - keywords: An array of relevant keywords summarizing the main points of each entry (excluding category names).
 - categories: An array of strings representing the categories related to the update.
 """.strip()  # noqa
@@ -50,14 +50,14 @@ class Category(str, Enum):
 
 class Change(BaseModel):
     date: str
-    markdown_content: str
+    items: list[str]
     keywords: list[str]
     categories: list[Category]
 
     def to_markdown(self) -> str:
         lines = [
             f"📅*{self.date}*",
-            self.markdown_content,
+            "\n".join([f"- {item}" for item in self.items]),
         ]
 
         if self.keywords:
@@ -66,12 +66,12 @@ class Change(BaseModel):
         if self.categories:
             lines += [f"Categories: {', '.join([category.get_emoji()+ category for category in self.categories])}"]
 
-        return "\n\n".join(lines)
+        return "\n".join(lines)
 
     def to_slack(self) -> str:
         lines = [
             f"📅*<{self.date}>*",
-            self.markdown_content,
+            "\n".join([f"- {item}" for item in self.items]),
         ]
 
         if self.keywords:
@@ -80,7 +80,7 @@ class Change(BaseModel):
         if self.categories:
             lines += [f"*Categories:* {', '.join([category.get_emoji()+ category for category in self.categories])}"]
 
-        return "\n\n".join(lines)
+        return "\n".join(lines)
 
 
 class Changelog(BaseModel):
