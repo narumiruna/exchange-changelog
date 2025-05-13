@@ -14,6 +14,7 @@ from exchange_changelog.config import Config
 from exchange_changelog.config import Document
 from exchange_changelog.config import load_config
 from exchange_changelog.slack import post_slack_message
+from exchange_changelog.utils import configure_langfuse
 
 loader = kabigon.Compose(
     [
@@ -48,6 +49,7 @@ def main(
     use_redis: Annotated[bool, typer.Option("-r", "--use-redis", help="use redis")] = False,
 ) -> None:
     load_dotenv(find_dotenv())
+    configure_langfuse()
 
     logger.info("loading config file: {}", config_file)
     cfg = load_config(config_file)
