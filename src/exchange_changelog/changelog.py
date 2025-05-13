@@ -6,7 +6,7 @@ from enum import Enum
 from loguru import logger
 from pydantic import BaseModel
 
-from .openai import parse_completion
+from .lazy import lazy_run_sync
 
 SYSTEM_PROMPT = r"""
 You will be provided with content from an API documentation page in Markdown format.
@@ -125,17 +125,8 @@ class Changelog(BaseModel):
 def extract_changelog(text: str, prompt: str | None = None) -> Changelog:
     # https://platform.openai.com/docs/guides/structured-outputs
     prompt = prompt or SYSTEM_PROMPT
-
-    return parse_completion(
-        messages=[
-            {
-                "role": "system",
-                "content": prompt.strip(),
-            },
-            {
-                "role": "user",
-                "content": text.strip(),
-            },
-        ],
-        response_format=Changelog,
+    return lazy_run_sync(
+        input=text,
+        instructions=prompt.strip(),
+        output_type=Changelog,
     )

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from functools import cache
+from typing import Any
 from typing import Literal
 from typing import TypeVar
 
@@ -82,7 +83,7 @@ async def lazy_run(
     model: Model | None = None,
     model_settings: ModelSettings | None = None,
     output_type: type[T] | None = None,
-) -> T:
+) -> Any:
     """Run the agent with the given input and instructions.
 
     Args:
@@ -117,7 +118,7 @@ def lazy_run_sync(
     model: Model | None = None,
     model_settings: ModelSettings | None = None,
     output_type: type[T] | None = None,
-) -> str | T:
+) -> Any:
     """Run the agent with the given input and instructions.
 
     Args:
