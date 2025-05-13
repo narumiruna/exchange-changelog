@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from exchange_changelog.config import APIDoc
 from exchange_changelog.config import Config
+from exchange_changelog.config import Document
 from exchange_changelog.config import load_config
 
 
@@ -40,7 +40,7 @@ def test_config_defaults() -> None:
 
 
 def test_apidoc_model() -> None:
-    apidoc = APIDoc(name="Test API", url="http://example.com")
+    apidoc = Document(name="Test API", url="http://example.com")
 
     assert apidoc.name == "Test API"
     assert apidoc.url == "http://example.com"

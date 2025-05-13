@@ -12,13 +12,13 @@ def load_config(f: str | Path) -> Config:
     return Config.model_validate(data)
 
 
-class APIDoc(BaseModel):
+class Document(BaseModel):
     name: str
     url: str
 
 
 class Config(BaseModel):
-    docs: list[APIDoc] = []
+    docs: list[Document] = []
     num_days: int = 14
     trim_len: int = 20000
     slack_channel: str | None = None

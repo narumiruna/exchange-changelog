@@ -9,8 +9,8 @@ from loguru import logger
 from exchange_changelog import redis
 from exchange_changelog.changelog import Changelog
 from exchange_changelog.changelog import extract_changelog
-from exchange_changelog.config import APIDoc
 from exchange_changelog.config import Config
+from exchange_changelog.config import Document
 from exchange_changelog.config import load_config
 from exchange_changelog.slack import post_slack_message
 
@@ -23,7 +23,7 @@ loader = kabigon.Compose(
 )
 
 
-def extract_recent_changelog(api_doc: APIDoc, cfg: Config) -> Changelog:
+def extract_recent_changelog(api_doc: Document, cfg: Config) -> Changelog:
     text = loader.load(api_doc.url)
     logger.info("text length: {}", len(text))
 
@@ -52,7 +52,7 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
     cfg = load_config(config_file)
     logger.info("prompt:\n{}", cfg.prompt)
 
-    results: list[tuple[APIDoc, Changelog]] = []
+    results: list[tuple[Document, Changelog]] = []
     for doc in cfg.docs:
         try:
             changelog = extract_recent_changelog(doc, cfg)
