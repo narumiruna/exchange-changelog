@@ -1,10 +1,12 @@
-import gradio as gr
+import chainlit as cl
+from agents import Agent
+from agents import ModelSettings
+from agents import Runner
+from agents import TResponseInputItem
 from dotenv import find_dotenv
 from dotenv import load_dotenv
-from loguru import logger
 
-from exchange_changelog.openai import create_completion
-from exchange_changelog.utils import save_text
+from exchange_changelog.lazy import get_openai_model
 
 META_PROMPT = """
 Given a task description or existing prompt, produce a detailed system prompt to guide a language model in completing the task effectively.
@@ -53,27 +55,35 @@ The final prompt you output should adhere to the following structure below. Do n
 """.strip()  # noqa
 
 
-def generate_response(message, history):
-    messages = [{"role": "system", "content": META_PROMPT}]
-    messages += history
-    messages += [{"role": "user", "content": message}]
+class Bot:
+    def __init__(self) -> None:
+        self.agent = Agent(
+            name="prompt-agent",
+            instructions=META_PROMPT,
+            model=get_openai_model(),
+            model_settings=ModelSettings(temperature=0.0),
+        )
+        self.input_items: list[TResponseInputItem] = []
 
-    logger.info("messages: {}", messages)
+    async def run(self, content: str) -> str:
+        self.input_items.append(
+            {
+                "role": "user",
+                "content": content,
+            }
+        )
 
-    try:
-        response = create_completion(messages)
-        logger.info("response: {}", response)
-        save_text(response, "prompt.txt")
-        return response
-    except Exception as e:
-        logger.error("unable to generate response: {}", e)
-        return str(e)
+        result = await Runner.run(self.agent, input=self.input_items)
+        self.input_items = result.to_input_list()
 
-
-def main() -> None:
-    load_dotenv(find_dotenv())
-    gr.ChatInterface(generate_response, type="messages").launch()
+        return result.final_output
 
 
-if __name__ == "__main__":
-    main()
+load_dotenv(find_dotenv())
+bot = Bot()
+
+
+@cl.on_message
+async def chat(message: cl.Message) -> None:
+    response = await bot.run(message.content)
+    await cl.Message(content=response).send()

@@ -49,7 +49,7 @@ Result: [gist](https://gist.github.com/narumiruna/707786b350fc17197a35ee9ae3d045
 To generate prompts, run the following script:
 
 ```sh
-uv run python generate_prompt.py
+uv run chainlit run -w generate_prompt.py
 ```
 
 For more details, refer to the [OpenAI Prompt Generation Guide](https://platform.openai.com/docs/guides/prompt-generation).
