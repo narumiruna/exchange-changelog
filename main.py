@@ -59,12 +59,12 @@ class App:
                 new_changes = []
                 for change in changelog.changes:
                     key = f"changelog:{doc.name}:{change.date}"
-                    if redis.exists(key):
+                    if await redis.exists(key):
                         logger.info("already seen change: {}", change)
                         continue
 
                     new_changes.append(change)
-                    redis.set(key, len(change.items))
+                    await redis.set(key, len(change.items))
                 changelog.changes = new_changes
             # post to slack
             if changelog.changes:
@@ -108,10 +108,7 @@ def main(
     load_dotenv(find_dotenv())
     configure_langfuse()
 
-    logger.info("loading config file: {}", config_file)
     config = load_config(config_file)
-    logger.info("prompt:\n{}", config.prompt)
-
     app = App(config, use_redis, output_file)
     app.run()
 
