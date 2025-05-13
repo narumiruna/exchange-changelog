@@ -5,6 +5,10 @@ from enum import Enum
 
 from loguru import logger
 from pydantic import BaseModel
+from slack_sdk.models.blocks import Block
+from slack_sdk.models.blocks import DividerBlock
+from slack_sdk.models.blocks import HeaderBlock
+from slack_sdk.models.blocks import MarkdownTextObject
 
 from .lazy import lazy_run_sync
 
@@ -102,6 +106,22 @@ class Changelog(BaseModel):
             lines += [changelog.to_markdown()]
 
         return "\n\n".join(lines)
+
+    def to_slack_blocks(self, name: str | None, url: str | None = None) -> list[Block]:
+        blocks = [HeaderBlock(text=f"*<{url}|{name}>*")]
+        if self.upcoming_changes:
+            blocks.append(HeaderBlock(text="🔜*Upcoming Changes*"))
+            blocks.append(Block(text=self.upcoming_changes))
+            blocks.append(DividerBlock())
+
+        for change in self.changes:
+            blocks.append(HeaderBlock(text=f"📅*<{change.date}>*"))
+            blocks.append(MarkdownTextObject(text="\n".join([f"- {item}" for item in change.items])))
+            blocks.append(Block(text=" ".join([f"🏷️{keyword}" for keyword in change.keywords])))
+            blocks.append(Block(text=" ".join([category.get_emoji() + category for category in change.categories])))
+            blocks.append(DividerBlock())
+
+        return blocks
 
     def to_slack(self, name: str | None, url: str | None = None) -> str:
         lines = []

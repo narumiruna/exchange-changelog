@@ -26,7 +26,7 @@ def get_slack_channel() -> str | None:
     return channel
 
 
-def post_slack_message(text: str) -> None:
+def post_slack_message(*, text: str | None = None, blocks=None) -> None:
     channel = get_slack_channel()
     client = get_slack_client()
 
@@ -34,6 +34,6 @@ def post_slack_message(text: str) -> None:
         return
 
     try:
-        client.chat_postMessage(channel=channel, text=text, mrkdwn=True)
+        client.chat_postMessage(channel=channel, blocks=blocks, text=text, mrkdwn=True)
     except SlackApiError as e:
         logger.error("slack api error: {}", e)

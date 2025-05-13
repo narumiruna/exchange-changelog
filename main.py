@@ -73,10 +73,10 @@ def main(
                 changelog.changes = new_changes
             # post to slack
             if changelog.changes:
-                post_slack_message(changelog.to_slack(doc.name, doc.url))
+                post_slack_message(blocks=changelog.to_slack_blocks(doc.name, doc.url))
         except Exception as e:
             logger.error("unable to extract changelog for {}, got: {}", doc.name, e)
-            post_slack_message(f"unable to extract changelog for {doc.name}, got: {e}")
+            post_slack_message(text=f"unable to extract changelog for {doc.name}, got: {e}")
             changelog = Changelog(changes=[], upcoming_changes="")
 
         results.append((doc, changelog))
