@@ -27,6 +27,9 @@ jobs:
           SINGLEFILE_PATH: ${{ secrets.SINGLEFILE_PATH }}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_CHANNEL: ${{ vars.SLACK_CHANNEL }}
+          LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+          LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+          LANGFUSE_HOST: ${{ vars.LANGFUSE_HOST }}
       - uses: danielmcconville/gist-sync-file-action@v2.0.0
         with:
           gistPat: ${{ secrets.GIST_TOKEN }}
