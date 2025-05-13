@@ -11,8 +11,9 @@ jobs:
     container:
       image: narumi/exchange-changelog:main
       env:
-        OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+        AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+        AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
         GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
         GIST_ID: ${{ secrets.GIST_ID }}
         SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}

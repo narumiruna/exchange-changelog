@@ -19,10 +19,10 @@ jobs:
           uv run playwright install
           uv run python main.py -c ${{ inputs.config_file }} -o changelog.md
         env:
-          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
           AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
           AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
-          OPENAI_API_VERSION: ${{ secrets.OPENAI_API_VERSION }}
+          OPENAI_API_VERSION: ${{ vars.OPENAI_API_VERSION }}
           SINGLEFILE_PATH: ${{ secrets.SINGLEFILE_PATH }}
       - uses: danielmcconville/gist-sync-file-action@v2.0.0
         with:
