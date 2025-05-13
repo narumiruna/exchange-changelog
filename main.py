@@ -64,13 +64,6 @@ class App:
         async with self.lock:
             self.results.append((doc, changelog))
 
-    async def _run(self) -> None:
-        tasks = [self.process_doc(doc) for doc in self.config.docs]
-        await asyncio.gather(*tasks)
-
-        self.write_file()
-        await self.post_slack_message()
-
     def write_file(self) -> None:
         with self.output_file.open("w", encoding="utf-8") as f:
             f.write(
@@ -102,6 +95,13 @@ class App:
             # post to slack
             if changelog.changes:
                 post_slack_message(changelog.to_slack(doc.name, doc.url))
+
+    async def _run(self) -> None:
+        tasks = [self.process_doc(doc) for doc in self.config.docs]
+        await asyncio.gather(*tasks)
+
+        self.write_file()
+        await self.post_slack_message()
 
     def run(self) -> None:
         asyncio.run(self._run())
