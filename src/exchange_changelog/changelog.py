@@ -58,8 +58,8 @@ class Change(BaseModel):
         lines = [
             f"📅*{self.date}*",
             "\n".join([f"- {item}" for item in self.items]),
-            ", ".join([f"🏷️{keyword}" for keyword in self.keywords]),
-            ", ".join([category.get_emoji() + category for category in self.categories]),
+            " ".join([f"🏷️{keyword}" for keyword in self.keywords]),
+            " ".join([category.get_emoji() + category for category in self.categories]),
         ]
         return "\n\n".join(lines)
 
@@ -67,8 +67,8 @@ class Change(BaseModel):
         lines = [
             f"📅*<{self.date}>*",
             "\n".join([f"- {item}" for item in self.items]),
-            ", ".join([f"🏷️{keyword}" for keyword in self.keywords]),
-            ", ".join([category.get_emoji() + category for category in self.categories]),
+            " ".join([f"🏷️{keyword}" for keyword in self.keywords]),
+            " ".join([category.get_emoji() + category for category in self.categories]),
         ]
         return "\n\n".join(lines)
 
