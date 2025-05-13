@@ -163,3 +163,5 @@ cython_debug/
 
 # Miscellaneous
 changelog.md
+chainlit.md
+.chainlit/
