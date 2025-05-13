@@ -23,19 +23,19 @@ Instructions:
 Output Format:
 For each extracted entry, provide the following:
 - date: The release or change date.
-- markdown_content: The content of the change or release note in Markdown format.
+- items: The content of the change or release note in plain text.
 - keywords: An array of relevant keywords summarizing the main points of each entry (excluding category names).
 - categories: An array of strings representing the categories related to the update.
 """.strip()  # noqa
 
 
 class Category(str, Enum):
-    BREAKING_CHANGES = "breaking changes"
-    NEW_FEATURES = "new features"
-    DEPRECATIONS = "deprecations"
-    BUG_FIXES = "bug fixes"
-    PERFORMANCE_IMPROVEMENTS = "performance improvements"
-    SECURITY_UPDATES = "security updates"
+    BREAKING_CHANGES = "BREAKING_CHANGES"
+    NEW_FEATURES = "NEW_FEATURES"
+    DEPRECATIONS = "DEPRECATIONS"
+    BUG_FIXES = "BUG_FIXES"
+    PERFORMANCE_IMPROVEMENTS = "PERFORMANCE_IMPROVEMENTS"
+    SECURITY_UPDATES = "SECURITY_UPDATES"
 
     def get_emoji(self) -> str:
         return {
@@ -50,36 +50,26 @@ class Category(str, Enum):
 
 class Change(BaseModel):
     date: str
-    markdown_content: str
+    items: list[str]
     keywords: list[str]
     categories: list[Category]
 
     def to_markdown(self) -> str:
         lines = [
             f"📅*{self.date}*",
-            self.markdown_content,
+            "\n".join([f"- {item}" for item in self.items]),
+            ", ".join([f"🏷️{keyword}" for keyword in self.keywords]),
+            ", ".join([category.get_emoji() + category for category in self.categories]),
         ]
-
-        if self.keywords:
-            lines += [f"Keywords: {', '.join(self.keywords)}"]
-
-        if self.categories:
-            lines += [f"Categories: {', '.join([category.get_emoji()+ category for category in self.categories])}"]
-
         return "\n\n".join(lines)
 
     def to_slack(self) -> str:
         lines = [
             f"📅*<{self.date}>*",
-            self.markdown_content,
+            "\n".join([f"- {item}" for item in self.items]),
+            ", ".join([f"🏷️{keyword}" for keyword in self.keywords]),
+            ", ".join([category.get_emoji() + category for category in self.categories]),
         ]
-
-        if self.keywords:
-            lines += [f"*Keywords:* {', '.join(self.keywords)}"]
-
-        if self.categories:
-            lines += [f"*Categories:* {', '.join([category.get_emoji()+ category for category in self.categories])}"]
-
         return "\n\n".join(lines)
 
 

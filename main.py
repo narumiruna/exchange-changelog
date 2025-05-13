@@ -75,7 +75,7 @@ def main(config_file: Path, output_file: Path, use_redis: bool) -> None:
                     continue
 
                 new_changes.append(change)
-                redis.set(key, len(change.markdown_content))
+                redis.set(key, len(change.items))
             changelog.changes = new_changes
 
         if changelog.changes:
