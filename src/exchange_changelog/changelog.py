@@ -8,7 +8,7 @@ from pydantic import BaseModel
 
 from .lazy import lazy_run_sync
 
-SYSTEM_PROMPT = r"""
+SYSTEM_PROMPT = """
 You will be provided with content from an API documentation page in Markdown format.
 Extract up to 10 changes or release notes, prioritizing those based on their dates from the changelog or release notes section.
 Also, extract upcoming changes: if the main heading "Upcoming Changes" is present, extract and summarize the content beneath it; if not, leave the output blank.
@@ -27,6 +27,16 @@ For each extracted entry, provide the following:
 - keywords: An array of relevant keywords summarizing the main points of each entry (excluding category names).
 - categories: An array of strings representing the categories related to the update.
 """.strip()  # noqa
+
+
+class Step(BaseModel):
+    explanation: str
+    output: str
+
+
+class Reasoning(BaseModel):
+    steps: list[Step]
+    final_output: str
 
 
 class Category(str, Enum):
@@ -49,6 +59,7 @@ class Category(str, Enum):
 
 
 class Change(BaseModel):
+    reasoning: Reasoning
     date: str
     items: list[str]
     keywords: list[str]
