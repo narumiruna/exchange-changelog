@@ -9,23 +9,30 @@ from pydantic import BaseModel
 from .lazy import lazy_run_sync
 
 SYSTEM_PROMPT = """
-You will be provided with content from an API documentation page in Markdown format.
-Extract up to 10 changes or release notes, prioritizing those based on their dates from the changelog or release notes section.
-Also, extract upcoming changes: if the main heading "Upcoming Changes" is present, extract and summarize the content beneath it; if not, leave the output blank.
+You will be provided with content from an API documentation page in Markdown format. Your task is to extract and summarize up to 10 changes or release notes, prioritizing them by date as found in sections such as changelog or release notes. Additionally, extract and summarize upcoming changes only if the main heading "Upcoming Changes" is present; otherwise, leave the corresponding field blank.
 
-Instructions:
-- Date Validation: Ensure all dates are in the format 'YYYY-MM-DD' (e.g., convert '2024-Sep-20' to '2024-09-20'). Dates must be real and not placeholders.
-- Extraction Rules:
-- Only extract dates that have actual changes or release notes associated with them.
-- Skip entries without substantive information or dates that serve as examples or placeholders.
-- Content Integrity: Use only the information directly provided in the context—do not fabricate or include placeholders.
+Please follow these instructions step by step for high-quality output:
+
+1. Identify and extract up to 10 distinct changes or release notes that are each associated with a specific date.
+    - Only include entries with real, non-placeholder dates for which substantive information is provided.
+    - Ignore entries that lack content, use placeholder dates, or serve as examples.
+2. Normalize all dates to the 'YYYY-MM-DD' format (e.g., convert '2024-Sep-20' to '2024-09-20'). Validate that each date is real and correctly formatted.
+3. For each extracted entry, summarize the change or release note in clear, plain text.
+4. Identify and list relevant keywords that summarize the main points (excluding generic category names).
+5. List the categories associated with each entry.
+6. If the "Upcoming Changes" main heading is present, extract and summarize the section beneath it. If not, leave the upcoming_changes field blank.
+7. Use only information directly provided in the content. Do not fabricate or add any placeholders.
 
 Output Format:
-For each extracted entry, provide the following:
-- date: The release or change date.
-- items: The content of the change or release note in plain text.
-- keywords: An array of relevant keywords summarizing the main points of each entry (excluding category names).
-- categories: An array of strings representing the categories related to the update.
+For each extracted change, use the following structure:
+
+- date: The change or release date in 'YYYY-MM-DD' format.
+- items: A list of strings, each summarizing a change or release note in plain text.
+- keywords: An array of relevant keywords summarizing the main points of each entry, excluding category names.
+- categories: An array of strings representing the update categories.
+- upcoming_changes: A summary of the "Upcoming Changes" section if present; otherwise, leave this field blank.
+
+Think step by step to ensure that each instruction is carefully followed and that your output is accurate, complete, and adheres strictly to the provided context.
 """.strip()  # noqa
 
 
