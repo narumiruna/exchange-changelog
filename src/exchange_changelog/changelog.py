@@ -6,7 +6,6 @@ from enum import Enum
 from loguru import logger
 from pydantic import BaseModel
 from slack_sdk.models.blocks import Block
-from slack_sdk.models.blocks import ContextBlock
 from slack_sdk.models.blocks import DividerBlock
 from slack_sdk.models.blocks import HeaderBlock
 from slack_sdk.models.blocks import MarkdownTextObject
@@ -119,13 +118,15 @@ class Changelog(BaseModel):
 
         for change in self.changes:
             blocks.append(HeaderBlock(text=f"📅*<{change.date}>*"))
-            blocks.append(MarkdownTextObject(text="\n".join([f"- {item}" for item in change.items])))
             blocks.append(
-                ContextBlock(elements=[TextObject(text=" ".join([f"🏷️{keyword}" for keyword in change.keywords]))])
+                SectionBlock(text=[MarkdownTextObject(text="\n".join([f"- {item}" for item in change.items]))])
             )
             blocks.append(
-                ContextBlock(
-                    elements=[
+                SectionBlock(text=[TextObject(text=" ".join([f"🏷️{keyword}" for keyword in change.keywords]))])
+            )
+            blocks.append(
+                SectionBlock(
+                    text=[
                         TextObject(text=" ".join([category.get_emoji() + category for category in change.categories]))
                     ]
                 )
