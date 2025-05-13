@@ -52,7 +52,7 @@ class App:
 
         return changelog
 
-    async def process_doc(self, doc: Document) -> None:
+    async def process_doc(self, doc: Document) -> Changelog:
         changelog = await self.extract_recent_changelog(doc)
         if self.use_redis:
             # filter out already seen changes
@@ -69,11 +69,12 @@ class App:
         # post to slack
         if changelog.changes:
             post_slack_message(changelog.to_slack(doc.name, doc.url))
+        return changelog
 
     async def try_process_doc(self, doc: Document) -> None:
         try:
             with logfire.span(f"processing {doc.name}"):
-                await self.process_doc(doc)
+                changelog = await self.process_doc(doc)
         except Exception as e:
             logger.error("unable to extract changelog for {}, got: {}", doc.name, e)
             post_slack_message(f"unable to extract changelog for {doc.name}, got: {e}")
