@@ -24,6 +24,8 @@ jobs:
           AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
           OPENAI_API_VERSION: ${{ vars.OPENAI_API_VERSION }}
           SINGLEFILE_PATH: ${{ secrets.SINGLEFILE_PATH }}
+          SLACK_TOKEN: ${{ secrets.DEV_SLACK_TOKEN }}
+          SLACK_CHANNEL: ${{ vars.DEV_SLACK_CHANNEL }}
       - uses: danielmcconville/gist-sync-file-action@v2.0.0
         with:
           gistPat: ${{ secrets.GIST_TOKEN }}
