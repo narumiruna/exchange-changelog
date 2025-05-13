@@ -6,9 +6,12 @@ from enum import Enum
 from loguru import logger
 from pydantic import BaseModel
 from slack_sdk.models.blocks import Block
+from slack_sdk.models.blocks import ContextBlock
 from slack_sdk.models.blocks import DividerBlock
 from slack_sdk.models.blocks import HeaderBlock
 from slack_sdk.models.blocks import MarkdownTextObject
+from slack_sdk.models.blocks import SectionBlock
+from slack_sdk.models.blocks import TextObject
 
 from .lazy import lazy_run_sync
 
@@ -111,14 +114,22 @@ class Changelog(BaseModel):
         blocks = [HeaderBlock(text=f"*<{url}|{name}>*")]
         if self.upcoming_changes:
             blocks.append(HeaderBlock(text="🔜*Upcoming Changes*"))
-            blocks.append(Block(text=self.upcoming_changes))
+            blocks.append(SectionBlock(text=self.upcoming_changes))
             blocks.append(DividerBlock())
 
         for change in self.changes:
             blocks.append(HeaderBlock(text=f"📅*<{change.date}>*"))
             blocks.append(MarkdownTextObject(text="\n".join([f"- {item}" for item in change.items])))
-            blocks.append(Block(text=" ".join([f"🏷️{keyword}" for keyword in change.keywords])))
-            blocks.append(Block(text=" ".join([category.get_emoji() + category for category in change.categories])))
+            blocks.append(
+                ContextBlock(elements=TextObject(text=" ".join([f"🏷️{keyword}" for keyword in change.keywords])))
+            )
+            blocks.append(
+                ContextBlock(
+                    elements=TextObject(
+                        text=" ".join([category.get_emoji() + category for category in change.categories])
+                    )
+                )
+            )
             blocks.append(DividerBlock())
 
         return blocks
