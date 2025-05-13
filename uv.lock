@@ -645,6 +645,7 @@ dependencies = [
     { name = "pyyaml" },
     { name = "redis" },
     { name = "slack-sdk" },
+    { name = "typer" },
 ]
 
 [package.dev-dependencies]
@@ -685,6 +686,7 @@ requires-dist = [
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "redis", specifier = ">=5.2.0" },
     { name = "slack-sdk", specifier = ">=3.33.1" },
+    { name = "typer", specifier = ">=0.15.3" },
 ]
 
 [package.metadata.requires-dev]
