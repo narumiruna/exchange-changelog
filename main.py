@@ -52,29 +52,10 @@ class App:
 
         return changelog
 
-    async def process_doc(self, doc: Document) -> Changelog:
-        changelog = await self.extract_recent_changelog(doc)
-        if self.use_redis:
-            # filter out already seen changes
-            new_changes = []
-            for change in changelog.changes:
-                key = f"changelog:{doc.name}:{change.date}"
-                if await redis.exists(key):
-                    logger.info("already seen change: {}", change)
-                    continue
-
-                new_changes.append(change)
-                await redis.set(key, len(change.items))
-            changelog.changes = new_changes
-        # post to slack
-        if changelog.changes:
-            post_slack_message(changelog.to_slack(doc.name, doc.url))
-        return changelog
-
-    async def try_process_doc(self, doc: Document) -> None:
+    async def process_doc(self, doc: Document) -> None:
         try:
             with logfire.span(f"processing {doc.name}"):
-                changelog = await self.process_doc(doc)
+                changelog = await self.extract_recent_changelog(doc)
         except Exception as e:
             logger.error("unable to extract changelog for {}, got: {}", doc.name, e)
             post_slack_message(f"unable to extract changelog for {doc.name}, got: {e}")
@@ -84,8 +65,11 @@ class App:
             self.results.append((doc, changelog))
 
     async def _run(self) -> None:
-        tasks = [self.try_process_doc(doc) for doc in self.config.docs]
+        tasks = [self.process_doc(doc) for doc in self.config.docs]
         await asyncio.gather(*tasks)
+
+        self.write_file()
+        await self.post_slack_message()
 
     def write_file(self) -> None:
         with self.output_file.open("w", encoding="utf-8") as f:
@@ -101,9 +85,26 @@ class App:
                 )
             )
 
+    async def post_slack_message(self) -> None:
+        for doc, changelog in self.results:
+            if self.use_redis:
+                # filter out already seen changes
+                new_changes = []
+                for change in changelog.changes:
+                    key = f"changelog:{doc.name}:{change.date}"
+                    if await redis.exists(key):
+                        logger.info("already seen change: {}", change)
+                        continue
+
+                    new_changes.append(change)
+                    await redis.set(key, len(change.items))
+                changelog.changes = new_changes
+            # post to slack
+            if changelog.changes:
+                post_slack_message(changelog.to_slack(doc.name, doc.url))
+
     def run(self) -> None:
         asyncio.run(self._run())
-        self.write_file()
 
 
 def main(
