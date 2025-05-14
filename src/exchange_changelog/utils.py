@@ -9,18 +9,12 @@ from loguru import logger
 
 
 def load_yaml(f: str | Path) -> dict:
-    with open(f) as fp:
+    path = Path(f)
+    if not path.exists():
+        raise FileNotFoundError(f"File {path} does not exist")
+
+    with path.open(encoding="utf-8") as fp:
         return yaml.safe_load(fp)
-
-
-def load_text(f: str | Path) -> str:
-    with open(f) as fp:
-        return fp.read()
-
-
-def save_text(text: str, f: str | Path) -> None:
-    with open(f, "w") as fp:
-        fp.write(text)
 
 
 def configure_langfuse(service_name: str | None = None) -> None:
