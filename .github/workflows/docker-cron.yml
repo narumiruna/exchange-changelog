@@ -27,5 +27,5 @@ jobs:
         run: (ls /.dockerenv && echo Found dockerenv) || (echo No dockerenv)
       - run: |
           cp /.dockerenv /app/.env
-          python main.py
+          exchange-changelog
         working-directory: /app

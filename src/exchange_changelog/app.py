@@ -7,11 +7,11 @@ import logfire
 from loguru import logger
 from redis.asyncio import Redis
 
-from exchange_changelog.changelog import Changelog
-from exchange_changelog.changelog import extract_changelog
-from exchange_changelog.config import Config
-from exchange_changelog.config import Document
-from exchange_changelog.slack import post_slack_message
+from .changelog import Changelog
+from .changelog import extract_changelog
+from .config import Config
+from .config import Document
+from .slack import post_slack_message
 
 
 class App:
