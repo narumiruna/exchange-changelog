@@ -30,7 +30,7 @@ jobs:
           LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
           LANGFUSE_HOST: ${{ vars.LANGFUSE_HOST }}
           LOGFIRE_ENVIRONMENT: dev
-          REDIS_URL: ${{ secrets.REDIS_URL }}
+          # REDIS_URL: ${{ secrets.REDIS_URL }}
       - uses: danielmcconville/gist-sync-file-action@v2.0.0
         with:
           gistPat: ${{ secrets.GIST_TOKEN }}
