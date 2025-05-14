@@ -46,6 +46,7 @@ dev = [
     "types-ujson>=5.10.0.20250326",
     "types-redis>=4.6.0.20241004",
     "chainlit>=2.5.5",
+    "types-deprecated>=1.2.15.20250304",
 ]
 
 [tool.ruff]
