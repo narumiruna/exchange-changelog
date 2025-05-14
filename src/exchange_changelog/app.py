@@ -99,8 +99,11 @@ class App:
                 post_slack_message(changelog.to_slack(doc.name, doc.url))
 
     async def _run(self) -> None:
-        tasks = [self.process_doc(doc) for doc in self.config.docs]
-        await asyncio.gather(*tasks)
+        # tasks = [self.process_doc(doc) for doc in self.config.docs]
+        # await asyncio.gather(*tasks)
+
+        for doc in self.config.docs:
+            await self.process_doc(doc)
 
         self.write_file()
         await self.post_slack_message()
