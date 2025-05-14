@@ -18,7 +18,7 @@ jobs:
         run: |
           uv sync
           uv run playwright install
-          uv run python main.py -c config/default.yaml -o changelog.md
+          uv run exchange-changelog -c config/default.yaml -o changelog.md
         env:
           OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
           AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}

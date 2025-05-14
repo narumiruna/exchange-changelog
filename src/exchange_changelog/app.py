@@ -1,23 +1,17 @@
 import asyncio
 import os
 from pathlib import Path
-from typing import Annotated
 
 import kabigon
 import logfire
-import typer
-from dotenv import find_dotenv
-from dotenv import load_dotenv
 from loguru import logger
 from redis.asyncio import Redis
 
-from exchange_changelog.changelog import Changelog
-from exchange_changelog.changelog import extract_changelog
-from exchange_changelog.config import Config
-from exchange_changelog.config import Document
-from exchange_changelog.config import load_config
-from exchange_changelog.slack import post_slack_message
-from exchange_changelog.utils import configure_langfuse
+from .changelog import Changelog
+from .changelog import extract_changelog
+from .config import Config
+from .config import Document
+from .slack import post_slack_message
 
 
 class App:
@@ -113,19 +107,3 @@ class App:
 
     def run(self) -> None:
         asyncio.run(self._run())
-
-
-def main(
-    config_file: Annotated[Path, typer.Option("-c", "--config-file", help="config file")] = Path("config/default.yaml"),
-    output_file: Annotated[Path, typer.Option("-o", "--output-file", help="output file")] = Path("changelog.md"),
-) -> None:
-    load_dotenv(find_dotenv())
-    configure_langfuse()
-
-    config = load_config(config_file)
-    app = App(config=config, output_file=output_file)
-    app.run()
-
-
-if __name__ == "__main__":
-    typer.run(main)
