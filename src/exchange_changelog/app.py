@@ -2,7 +2,6 @@ import asyncio
 import os
 from pathlib import Path
 
-import kabigon
 import logfire
 from loguru import logger
 from redis.asyncio import Redis
@@ -11,6 +10,7 @@ from .changelog import Changelog
 from .changelog import extract_changelog
 from .config import Config
 from .config import Document
+from .scraper import PlaywrightScraper
 from .slack import post_slack_message
 
 
@@ -28,16 +28,10 @@ class App:
 
         self.lock = asyncio.Lock()
         self.results: list[tuple[Document, Changelog]] = []
-        self.loader = kabigon.Compose(
-            [
-                # kabigon.HttpxLoader(),
-                kabigon.PlaywrightLoader(timeout=50_000, wait_until="networkidle"),
-                kabigon.PlaywrightLoader(timeout=10_000),
-            ]
-        )
+        self.scraper = PlaywrightScraper(timeout=30_000)
 
     async def extract_recent_changelog(self, api_doc: Document) -> Changelog:
-        text = await self.loader.async_load(api_doc.url)
+        text = await self.scraper(api_doc.url)
         logger.info("text length: {}", len(text))
 
         # trim text
