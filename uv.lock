@@ -720,6 +720,7 @@ dev = [
     { name = "ruff" },
     { name = "types-aiofiles" },
     { name = "types-decorator" },
+    { name = "types-deprecated" },
     { name = "types-pyopenssl" },
     { name = "types-pytz" },
     { name = "types-pyyaml" },
@@ -760,6 +761,7 @@ dev = [
     { name = "ruff", specifier = ">=0.7.0" },
     { name = "types-aiofiles", specifier = ">=24.1.0.20250326" },
     { name = "types-decorator", specifier = ">=5.1.8.20240310" },
+    { name = "types-deprecated", specifier = ">=1.2.15.20250304" },
     { name = "types-pyopenssl", specifier = ">=24.1.0.20240722" },
     { name = "types-pytz", specifier = ">=2025.2.0.20250326" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20240917" },
@@ -3886,6 +3888,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/b4/61/afe7f9505058fc8d0c22deacb379eb299cd7319ee7459ab5c3ec2d435e93/types_decorator-5.2.0.20250324.tar.gz", hash = "sha256:8fbd72b0dadc56176e48e5187de744e76fe45bcc91a25874baa75662412155d3", size = 9063 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c4/02/49fff752b50ad681003f3adb9573d6a4a928fdaa786eefd8e1d87226c0d6/types_decorator-5.2.0.20250324-py3-none-any.whl", hash = "sha256:0740cee7ce57cf9cf2b306114a1588984255f706efa0f35b54b2cff290a110e2", size = 8175 },
+]
+
+[[package]]
+name = "types-deprecated"
+version = "1.2.15.20250304"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/0e/67/eeefaaabb03b288aad85483d410452c8bbcbf8b2bd876b0e467ebd97415b/types_deprecated-1.2.15.20250304.tar.gz", hash = "sha256:c329030553029de5cc6cb30f269c11f4e00e598c4241290179f63cda7d33f719", size = 8015 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4d/e3/c18aa72ab84e0bc127a3a94e93be1a6ac2cb281371d3a45376ab7cfdd31c/types_deprecated-1.2.15.20250304-py3-none-any.whl", hash = "sha256:86a65aa550ea8acf49f27e226b8953288cd851de887970fbbdf2239c116c3107", size = 8553 },
 ]
 
 [[package]]
