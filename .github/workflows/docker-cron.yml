@@ -21,6 +21,7 @@ jobs:
         LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
         LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
         LANGFUSE_HOST: ${{ vars.LANGFUSE_HOST }}
+        REDIS_URL: ${{ secrets.REDIS_URL }}
     steps:
       - name: Check for dockerenv file
         run: (ls /.dockerenv && echo Found dockerenv) || (echo No dockerenv)

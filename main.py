@@ -1,4 +1,5 @@
 import asyncio
+import os
 from pathlib import Path
 from typing import Annotated
 
@@ -8,8 +9,8 @@ import typer
 from dotenv import find_dotenv
 from dotenv import load_dotenv
 from loguru import logger
+from redis.asyncio import Redis
 
-from exchange_changelog import redis
 from exchange_changelog.changelog import Changelog
 from exchange_changelog.changelog import extract_changelog
 from exchange_changelog.config import Config
@@ -20,10 +21,15 @@ from exchange_changelog.utils import configure_langfuse
 
 
 class App:
-    def __init__(self, config: Config, use_redis: bool, output_file: str | Path) -> None:
+    def __init__(self, config: Config, output_file: str | Path) -> None:
         self.config = config
-        self.use_redis = use_redis
         self.output_file = Path(output_file)
+
+        # Setup redis
+        self.redis = None
+        redis_url = os.getenv("REDIS_URL")
+        if redis_url is not None:
+            self.redis = Redis.from_url(redis_url)
 
         self.lock = asyncio.Lock()
         self.results: list[tuple[Document, Changelog]] = []
@@ -80,17 +86,18 @@ class App:
 
     async def post_slack_message(self) -> None:
         for doc, changelog in self.results:
-            if self.use_redis:
+            if self.redis is not None:
                 # filter out already seen changes
                 new_changes = []
                 for change in changelog.changes:
                     key = f"changelog:{doc.name}:{change.date}"
-                    if await redis.exists(key):
+
+                    if await self.redis.exists(key):
                         logger.info("already seen change: {}", change)
                         continue
 
                     new_changes.append(change)
-                    await redis.set(key, len(change.items))
+                    await self.redis.set(key, len(change.items))
                 changelog.changes = new_changes
             # post to slack
             if changelog.changes:
@@ -110,13 +117,12 @@ class App:
 def main(
     config_file: Annotated[Path, typer.Option("-c", "--config-file", help="config file")] = Path("config/default.yaml"),
     output_file: Annotated[Path, typer.Option("-o", "--output-file", help="output file")] = Path("changelog.md"),
-    use_redis: Annotated[bool, typer.Option("-r", "--use-redis", help="use redis")] = False,
 ) -> None:
     load_dotenv(find_dotenv())
     configure_langfuse()
 
     config = load_config(config_file)
-    app = App(config, use_redis, output_file)
+    app = App(config=config, output_file=output_file)
     app.run()
 
 
