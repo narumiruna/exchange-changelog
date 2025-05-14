@@ -29,6 +29,7 @@ class App:
         self.redis = None
         redis_url = os.getenv("REDIS_URL")
         if redis_url is not None:
+            logger.info("REDIS_URL is set, using redis")
             self.redis = Redis.from_url(redis_url)
 
         self.lock = asyncio.Lock()
