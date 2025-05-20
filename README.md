@@ -27,7 +27,7 @@ export LOGFIRE_ENVIRONMENT=dev
 
 export REDIS_URL=
 
-uv run python main.py -c config/dev.yaml -o changelog.md
+uv run exchange-changelog -c config/default.yaml -o changelog.md
 ```
 
 Result: [gist](https://gist.github.com/narumiruna/707786b350fc17197a35ee9ae3d0456d)
