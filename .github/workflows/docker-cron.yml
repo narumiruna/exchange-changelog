@@ -25,8 +25,11 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          path: /app
+
+      - name: Copy files
+        run: |
+          mkdir -p /app
+          cp -r ./* /app/
 
       - name: Check for dockerenv file
         run: (ls /.dockerenv && echo Found dockerenv) || (echo No dockerenv)
