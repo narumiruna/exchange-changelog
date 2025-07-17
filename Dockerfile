@@ -30,4 +30,8 @@ RUN playwright install --with-deps chromium \
     && apt-get install -y xauth \
     && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && \
+    apt-get install -y xvfb \
+    && rm -rf /var/lib/apt/lists/*
+
 CMD ["exchange-changelog"]
