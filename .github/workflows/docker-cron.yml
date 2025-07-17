@@ -23,6 +23,11 @@ jobs:
         LANGFUSE_HOST: ${{ vars.LANGFUSE_HOST }}
         REDIS_URL: ${{ secrets.REDIS_URL }}
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          path: /app
+
       - name: Check for dockerenv file
         run: (ls /.dockerenv && echo Found dockerenv) || (echo No dockerenv)
       - run: |
