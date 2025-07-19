@@ -22,7 +22,7 @@ jobs:
         LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
         LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
         LANGFUSE_HOST: ${{ vars.LANGFUSE_HOST }}
-        REDIS_URL: ${{ secrets.REDIS_URL }}
+        # REDIS_URL: ${{ secrets.REDIS_URL }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
