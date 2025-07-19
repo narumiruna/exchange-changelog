@@ -39,5 +39,5 @@ jobs:
           cp /.dockerenv /app/.env
           uv sync
           uv run playwright install chromium
-          exchange-changelog
+          xvfb-run exchange-changelog
         working-directory: /app
