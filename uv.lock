@@ -1666,22 +1666,24 @@ wheels = [
 
 [[package]]
 name = "mcp"
-version = "1.9.4"
+version = "1.12.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
     { name = "httpx" },
     { name = "httpx-sse" },
+    { name = "jsonschema" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "python-multipart" },
+    { name = "pywin32", marker = "sys_platform == 'win32'" },
     { name = "sse-starlette" },
     { name = "starlette" },
     { name = "uvicorn", marker = "sys_platform != 'emscripten'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/06/f2/dc2450e566eeccf92d89a00c3e813234ad58e2ba1e31d11467a09ac4f3b9/mcp-1.9.4.tar.gz", hash = "sha256:cfb0bcd1a9535b42edaef89947b9e18a8feb49362e1cc059d6e7fc636f2cb09f", size = 333294, upload-time = "2025-06-12T08:20:30.158Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/45/94/caa0f4754e2437f7033068989f13fee784856f95870c786b0b5c2c0f511e/mcp-1.12.0.tar.gz", hash = "sha256:853f6b17a3f31ea6e2f278c2ec7d3b38457bc80c7c2c675260dd7f04a6fd0e70", size = 424678, upload-time = "2025-07-17T19:46:35.522Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/97/fc/80e655c955137393c443842ffcc4feccab5b12fa7cb8de9ced90f90e6998/mcp-1.9.4-py3-none-any.whl", hash = "sha256:7fcf36b62936adb8e63f89346bccca1268eeca9bf6dfb562ee10b1dfbda9dac0", size = 130232, upload-time = "2025-06-12T08:20:28.551Z" },
+    { url = "https://files.pythonhosted.org/packages/ed/da/c7eaab6a58f1034de115b7902141ad8f81b4f3bbf7dc0cc267594947a4d7/mcp-1.12.0-py3-none-any.whl", hash = "sha256:19a498b2bf273283e463b4dd1ed83f791fbba5c25bfa16b8b34cfd5571673e7f", size = 158470, upload-time = "2025-07-17T19:46:34.166Z" },
 ]
 
 [[package]]
@@ -1922,7 +1924,7 @@ wheels = [
 
 [[package]]
 name = "openai"
-version = "1.87.0"
+version = "1.97.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
@@ -1934,14 +1936,14 @@ dependencies = [
     { name = "tqdm" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/47/ed/2b3f6c7e950784e9442115ab8ebeff514d543fb33da10607b39364645a75/openai-1.87.0.tar.gz", hash = "sha256:5c69764171e0db9ef993e7a4d8a01fd8ff1026b66f8bdd005b9461782b6e7dfc", size = 470880, upload-time = "2025-06-16T19:04:26.316Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e0/c6/b8d66e4f3b95493a8957065b24533333c927dc23817abe397f13fe589c6e/openai-1.97.0.tar.gz", hash = "sha256:0be349569ccaa4fb54f97bb808423fd29ccaeb1246ee1be762e0c81a47bae0aa", size = 493850, upload-time = "2025-07-16T16:37:35.196Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/36/ac/313ded47ce1d5bc2ec02ed5dd5506bf5718678a4655ac20f337231d9aae3/openai-1.87.0-py3-none-any.whl", hash = "sha256:f9bcae02ac4fff6522276eee85d33047335cfb692b863bd8261353ce4ada5692", size = 734368, upload-time = "2025-06-16T19:04:23.181Z" },
+    { url = "https://files.pythonhosted.org/packages/8a/91/1f1cf577f745e956b276a8b1d3d76fa7a6ee0c2b05db3b001b900f2c71db/openai-1.97.0-py3-none-any.whl", hash = "sha256:a1c24d96f4609f3f7f51c9e1c2606d97cc6e334833438659cfd687e9c972c610", size = 764953, upload-time = "2025-07-16T16:37:33.135Z" },
 ]
 
 [[package]]
 name = "openai-agents"
-version = "0.1.0"
+version = "0.2.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "griffe" },
@@ -1952,9 +1954,9 @@ dependencies = [
     { name = "types-requests" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/99/f8/a292d8f506997355755d88db619966539ec838ce18f070c5a101e5a430ec/openai_agents-0.1.0.tar.gz", hash = "sha256:a697a4fdd881a7a16db8c0dcafba0f17d9e90b6236a4b79923bd043b6ae86d80", size = 1379588, upload-time = "2025-06-27T20:58:03.186Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/45/e2/b23f1076fb16f672d8dced4e4fa055e0ee824b35c1b11c2c23106ce8d99d/openai_agents-0.2.2.tar.gz", hash = "sha256:8a40971db5113be8f1a5842f30cd9f5ebec29848124f64f95820b6d52096241c", size = 1453555, upload-time = "2025-07-17T17:31:02.58Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/31/5b/326e6b1b661dbef718977a8379f9702a4eec1df772450517870beeb3af35/openai_agents-0.1.0-py3-none-any.whl", hash = "sha256:6a8ef71d3f20aecba0f01bca2e059590d1c23f5adc02d780cb5921ea8a7ca774", size = 130620, upload-time = "2025-06-27T20:58:01.461Z" },
+    { url = "https://files.pythonhosted.org/packages/d5/00/5ab04ee5d49eebc08e835d79cbaf0cbde1fef7aff8c3f1bbb9e967c9ff23/openai_agents-0.2.2-py3-none-any.whl", hash = "sha256:cff8a2556c8e69e05aff3ab9eb40ceff05494c60297a682964dbc8e5309a3686", size = 161083, upload-time = "2025-07-17T17:31:00.78Z" },
 ]
 
 [[package]]
